@@ -1,0 +1,6 @@
+export const GRID_CONSTANTS = {
+  GRID_SIZE: 600,
+  CELL_SIZE: 40,
+  MIN_ZOOM_LEVEL: 0.5,
+  MAX_ZOOM_LEVEL: 2.0,
+};

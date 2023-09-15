@@ -1,0 +1,8 @@
+<div class="canvas-container"
+     (wheel)="zoom($event)"
+     (mousedown)="startPan($event)"
+     (mousemove)="pan($event)"
+     (mouseup)="endPan()">
+  <canvas #gridCanvas class="layer" width="600" height="600"></canvas>
+  <canvas #gameCanvas class="layer" width="600" height="600"></canvas>
+</div>
