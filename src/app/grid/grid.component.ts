@@ -46,21 +46,43 @@ export class GridComponent implements OnInit {
 
     this.gridCtx.strokeStyle = GRID_COLORS.GRID_LINE;
 
-    for (let y = 0, i = 0; y <= this.gridSize; y += GRID_CONSTANTS.CELL_SIZE, i++) {
-      this.gridCtx.lineWidth = (i % 5 === 0) ? 2 : 0.5;
+    const gridSpacing = this.getGridSpacing();
+
+    for (let y = 0, i = 0; y <= this.gridSize; y += GRID_CONSTANTS.CELL_SIZE * gridSpacing, i += gridSpacing) {
+      this.gridCtx.lineWidth = (i % 6 === 0) ? 2 : 0.5;
       this.gridCtx.beginPath();
       this.gridCtx.moveTo(0, y);
       this.gridCtx.lineTo(this.gridSize, y);
       this.gridCtx.stroke();
     }
 
-    for (let x = 0, i = 0; x <= this.gridSize; x += GRID_CONSTANTS.CELL_SIZE, i++) {
-      this.gridCtx.lineWidth = (i % 5 === 0) ? 2 : 0.5;
+    for (let x = 0, i = 0; x <= this.gridSize; x += GRID_CONSTANTS.CELL_SIZE * gridSpacing, i += gridSpacing) {
+      this.gridCtx.lineWidth = (i % 6 === 0) ? 2 : 0.5;
       this.gridCtx.beginPath();
       this.gridCtx.moveTo(x, 0);
       this.gridCtx.lineTo(x, this.gridSize);
       this.gridCtx.stroke();
     }
+  }
+
+  private getGridSpacing(): number {
+    const zoomLevel = this.transformationMatrixService.matrix[0];
+    let gridSpacing = 1;
+
+    if (zoomLevel <= GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD && zoomLevel > GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 2) {
+      gridSpacing = 2;
+    } else if (zoomLevel <= GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 2 && zoomLevel > GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 4) {
+      gridSpacing = 4;
+    } else if (zoomLevel <= GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 4 && zoomLevel > GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 8) {
+      gridSpacing = 8;
+    } else if (zoomLevel <= GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 8 && zoomLevel > GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 16) {
+      gridSpacing = 16;
+    } else if (zoomLevel <= GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 16 && zoomLevel > GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 32) {
+      gridSpacing = 32;
+    }
+
+    console.log('gridSpacing', gridSpacing)
+    return gridSpacing;
   }
 
   initializeGridCells(): void {
