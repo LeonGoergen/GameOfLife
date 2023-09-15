@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {QuadTree} from "./quadtree/quadtree.model";
 import {GRID_CONSTANTS} from "../app.constants";
 import {TransformationMatrixService} from "./services/transformation-matrix.service";
+import {Cell} from "./cell/cell.model";
 
 @Component({
   selector: 'app-grid',
@@ -14,8 +14,11 @@ export class GridComponent implements OnInit {
 
   private gridCtx!: CanvasRenderingContext2D;
   private gameCtx!: CanvasRenderingContext2D;
-  private quadtree!: QuadTree;
+
   private gridSize!: number;
+
+  private cells: Map<string, Cell> = new Map();
+  private cellsToCheck: Set<string> = new Set();
 
   private panConfig = {
     isPanning: false,
@@ -33,8 +36,8 @@ export class GridComponent implements OnInit {
     this.drawGridLines();
 
     this.gameCtx = this.gameCanvas.nativeElement.getContext('2d')!;
-
-    this.quadtree = new QuadTree(0, 0, this.gridSize, this.gridSize);
+    this.initializeGridCells();
+    this.drawCells();
   }
 
   drawGridLines(): void {
@@ -43,7 +46,6 @@ export class GridComponent implements OnInit {
 
     this.gridCtx.strokeStyle = '#000';
 
-    // Draw horizontal lines
     for (let y = 0; y <= this.gridSize; y += GRID_CONSTANTS.CELL_SIZE) {
       this.gridCtx.beginPath();
       this.gridCtx.moveTo(0, y);
@@ -51,13 +53,37 @@ export class GridComponent implements OnInit {
       this.gridCtx.stroke();
     }
 
-    // Draw vertical lines
     for (let x = 0; x <= this.gridSize; x += GRID_CONSTANTS.CELL_SIZE) {
       this.gridCtx.beginPath();
       this.gridCtx.moveTo(x, 0);
       this.gridCtx.lineTo(x, this.gridSize);
       this.gridCtx.stroke();
     }
+  }
+
+  initializeGridCells(): void {
+    for (let x = 0; x < this.gridSize; x += GRID_CONSTANTS.CELL_SIZE) {
+      for (let y = 0; y < this.gridSize; y += GRID_CONSTANTS.CELL_SIZE) {
+        const cell = new Cell(x, y, Math.random() < 0.1);
+        this.cells.set(cell.key, cell);
+        if (cell.alive) {
+          this.cellsToCheck.add(cell.key);
+        }
+      }
+    }
+  }
+
+  drawCells(): void {
+    this.gameCtx.clearRect(0, 0, this.gridSize, this.gridSize);
+    this.gameCtx.setTransform(...this.transformationMatrixService.matrix as any);
+    this.gameCtx.fillStyle = '#3b3b3b';
+
+    this.cellsToCheck.forEach((key) => {
+      const cell = this.cells.get(key)!;
+      cell.alive
+        ? this.gameCtx.fillRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE)
+        : this.gameCtx.clearRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE);
+    });
   }
 
   startPan(event: MouseEvent): void {
@@ -78,7 +104,11 @@ export class GridComponent implements OnInit {
       this.panConfig.lastPanY = event.clientY;
 
       this.panConfig.totalPanDistance += Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-      requestAnimationFrame(() => this.drawGridLines());
+
+      requestAnimationFrame(() => {
+        this.drawGridLines();
+        this.drawCells();
+      });
     }
   }
 
@@ -97,6 +127,9 @@ export class GridComponent implements OnInit {
     const amount = 1 - event.deltaY * GRID_CONSTANTS.ZOOM_FACTOR;
     this.transformationMatrixService.scaleAt({ x, y }, amount);
 
-    requestAnimationFrame(() => this.drawGridLines());
+    requestAnimationFrame(() => {
+      this.drawGridLines();
+      this.drawCells();
+    });
   }
 }

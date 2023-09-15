@@ -23,6 +23,33 @@ export class TransformationMatrixService {
     ];
   }
 
+  get inverseMatrix() {
+    const det = this.scaleX * this.scaleY - this.skewX * this.skewY;
+
+    if (det === 0) {
+      throw new Error('Non-invertible matrix');
+    }
+
+    const invDet = 1 / det;
+
+    const invScaleX = this.scaleY * invDet;
+    const invSkewY = -this.skewY * invDet;
+    const invSkewX = -this.skewX * invDet;
+    const invScaleY = this.scaleX * invDet;
+
+    const invTranslateX = -(invScaleX * this.translateX + invSkewY * this.translateY);
+    const invTranslateY = -(invSkewX * this.translateX + invScaleY * this.translateY);
+
+    return [
+      invScaleX,
+      invSkewY,
+      invSkewX,
+      invScaleY,
+      invTranslateX,
+      invTranslateY,
+    ];
+  }
+
   translate(deltaX: number, deltaY: number): void {
     this.translateX += deltaX;
     this.translateY += deltaY;
