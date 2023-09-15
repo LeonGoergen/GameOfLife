@@ -79,11 +79,8 @@ export class GridComponent implements AfterViewInit {
       gridSpacing = 8;
     } else if (zoomLevel <= GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 8 && zoomLevel > GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 16) {
       gridSpacing = 16;
-    } else if (zoomLevel <= GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 16 && zoomLevel > GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 32) {
-      gridSpacing = 32;
     }
 
-    console.log('gridSpacing', gridSpacing)
     return gridSpacing;
   }
 
