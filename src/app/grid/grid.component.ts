@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {GRID_CONSTANTS} from "../app.constants";
+import {GRID_CONSTANTS, GRID_COLORS} from "../app.constants";
 import {TransformationMatrixService} from "./services/transformation-matrix.service";
 import {Cell} from "./cell/cell.model";
 
@@ -44,7 +44,7 @@ export class GridComponent implements OnInit {
     this.gridCtx.clearRect(0, 0, this.gridSize, this.gridSize);
     this.gridCtx.setTransform(...this.transformationMatrixService.matrix as any);
 
-    this.gridCtx.strokeStyle = 'lightgray';
+    this.gridCtx.strokeStyle = GRID_COLORS.GRID_LINE;
 
     for (let y = 0; y <= this.gridSize; y += GRID_CONSTANTS.CELL_SIZE) {
       this.gridCtx.beginPath();
@@ -62,15 +62,18 @@ export class GridComponent implements OnInit {
   }
 
   initializeGridCells(): void {
-    for (let x = 0; x < this.gridSize; x += GRID_CONSTANTS.CELL_SIZE) {
-      for (let y = 0; y < this.gridSize; y += GRID_CONSTANTS.CELL_SIZE) {
-        const cell = new Cell(x, y, Math.random() < 0.1);
-        this.cells.set(cell.key, cell);
-        if (cell.alive) {
-          this.cellsToCheck.add(cell.key);
-        }
+    const cellSize = GRID_CONSTANTS.CELL_SIZE;
+    const range = Array.from({length: this.gridSize / cellSize}, (_, i) => i * cellSize);
+
+    const cellPositions = range.flatMap(x => range.map(y => ({ x, y })));
+
+    cellPositions.forEach(({ x, y }) => {
+      const cell = new Cell(x, y, Math.random() < 0.1);
+      this.cells.set(cell.key, cell);
+      if (cell.alive) {
+        this.cellsToCheck.add(cell.key);
       }
-    }
+    });
   }
 
   drawCells(): void {
@@ -79,23 +82,16 @@ export class GridComponent implements OnInit {
     this.gameCtx.clearRect(0, 0, this.gridSize, this.gridSize);
     this.gameCtx.setTransform(...this.transformationMatrixService.matrix as any);
 
-    this.gameCtx.fillStyle = '#3b3b3b';
+    this.gameCtx.fillStyle = GRID_COLORS.DEAD;
     this.gameCtx.fillRect(0, 0, this.gridSize, this.gridSize);
 
-    this.gameCtx.fillStyle = 'white';
+    this.gameCtx.fillStyle = GRID_COLORS.ALIVE;
 
-    for (let x = visibleGridRange.startCol; x <= visibleGridRange.endCol; x++) {
-      for (let y = visibleGridRange.startRow; y <= visibleGridRange.endRow; y++) {
-        const key = `${x * GRID_CONSTANTS.CELL_SIZE},${y * GRID_CONSTANTS.CELL_SIZE}`;
-        if (this.cellsToCheck.has(key)) {
-          const cell = this.cells.get(key);
-          if (cell && cell.alive) {
-            // Fill white color for alive cells
-            this.gameCtx.fillRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE);
-          }
-        }
-      }
-    }
+    const cellsToCheck = this.getCellsToCheck(visibleGridRange);
+    cellsToCheck.forEach(cell => {
+      if (cell && cell.alive)
+        this.gameCtx.fillRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE);
+    });
   }
 
   getVisibleGridRange() {
@@ -111,6 +107,21 @@ export class GridComponent implements OnInit {
     const endRow = Math.ceil(bottomRight.y / GRID_CONSTANTS.CELL_SIZE);
 
     return {startCol, endCol, startRow, endRow};
+  }
+
+  getCellsToCheck(visibleGridRange: any): Cell[] {
+    const keys: string[] = [];
+
+    for (let x = visibleGridRange.startCol; x <= visibleGridRange.endCol; x++) {
+      for (let y = visibleGridRange.startRow; y <= visibleGridRange.endRow; y++) {
+        keys.push(`${x * GRID_CONSTANTS.CELL_SIZE},${y * GRID_CONSTANTS.CELL_SIZE}`);
+      }
+    }
+
+    return keys
+      .filter(key => this.cellsToCheck.has(key))
+      .map(key => this.cells.get(key))
+      .filter((cell): cell is Cell => cell !== undefined);
   }
 
   startPan(event: MouseEvent): void {

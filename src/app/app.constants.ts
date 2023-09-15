@@ -5,3 +5,9 @@ export const GRID_CONSTANTS = {
   MAX_ZOOM_LEVEL: 2.0,
   ZOOM_FACTOR: 0.0005,
 };
+
+export const GRID_COLORS = {
+  GRID_LINE: 'lightgray',
+  DEAD: '#3b3b3b',
+  ALIVE: 'whitesmoke',
+}
