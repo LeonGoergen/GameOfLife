@@ -3,4 +3,5 @@ export const GRID_CONSTANTS = {
   CELL_SIZE: 40,
   MIN_ZOOM_LEVEL: 0.5,
   MAX_ZOOM_LEVEL: 2.0,
+  ZOOM_FACTOR: 0.0005,
 };
