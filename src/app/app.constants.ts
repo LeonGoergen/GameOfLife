@@ -1,4 +1,6 @@
 export const GRID_CONSTANTS = {
+  CANVAS_WIDTH: window.innerWidth,
+  CANVAS_HEIGHT: window.innerHeight,
   GRID_SIZE: 60_000,
   CELL_SIZE: 40,
   MIN_ZOOM_LEVEL: 0.1,

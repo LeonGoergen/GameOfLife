@@ -50,9 +50,24 @@ export class TransformationMatrixService {
     ];
   }
 
+  private calculateBounds(): { maxTranslateX: number, minTranslateX: number, maxTranslateY: number, minTranslateY: number } {
+    const maxTranslateX = 0;
+    const minTranslateX = GRID_CONSTANTS.CANVAS_WIDTH - (GRID_CONSTANTS.GRID_SIZE * this.scaleX);
+
+    const maxTranslateY = 0;
+    const minTranslateY = GRID_CONSTANTS.CANVAS_HEIGHT - (GRID_CONSTANTS.GRID_SIZE * this.scaleY);
+
+    return { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY };
+  }
+
   translate(deltaX: number, deltaY: number): void {
-    this.translateX += deltaX;
-    this.translateY += deltaY;
+    const newTranslateX = this.translateX + deltaX;
+    const newTranslateY = this.translateY + deltaY;
+
+    const { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY } = this.calculateBounds();
+
+    this.translateX = Math.min(maxTranslateX, Math.max(minTranslateX, newTranslateX));
+    this.translateY = Math.min(maxTranslateY, Math.max(minTranslateY, newTranslateY));
   }
 
   scaleAt(point: { x: number; y: number }, amount: number): void {
@@ -66,6 +81,11 @@ export class TransformationMatrixService {
 
     this.translateX = point.x - (point.x - this.translateX) * amount;
     this.translateY = point.y - (point.y - this.translateY) * amount;
+
+    const { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY } = this.calculateBounds();
+
+    this.translateX = Math.min(maxTranslateX, Math.max(minTranslateX, this.translateX));
+    this.translateY = Math.min(maxTranslateY, Math.max(minTranslateY, this.translateY));
   }
 
   transformPoint(point: { x: number; y: number }, matrix: number[]): { x: number; y: number } {

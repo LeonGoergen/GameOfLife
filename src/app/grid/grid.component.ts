@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {GRID_COLORS, GRID_CONSTANTS} from "../app.constants";
 import {TransformationMatrixService} from "./services/transformation-matrix.service";
 import {Cell} from "./cell/cell.model";
@@ -8,7 +8,9 @@ import {Cell} from "./cell/cell.model";
   templateUrl: './grid.component.html',
   styleUrls: ['./grid.component.css']
 })
-export class GridComponent implements OnInit {
+export class GridComponent implements AfterViewInit {
+  CANVAS_WIDTH = GRID_CONSTANTS.CANVAS_WIDTH;
+  CANVAS_HEIGHT = GRID_CONSTANTS.CANVAS_HEIGHT;
   @ViewChild('gridCanvas', { static: true }) gridCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('gameCanvas', { static: true }) gameCanvas!: ElementRef<HTMLCanvasElement>;
 
@@ -29,7 +31,7 @@ export class GridComponent implements OnInit {
 
   constructor(private transformationMatrixService: TransformationMatrixService) {}
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.gridSize = GRID_CONSTANTS.GRID_SIZE;
 
     this.gridCtx = this.gridCanvas.nativeElement.getContext('2d')!;
