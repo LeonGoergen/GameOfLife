@@ -46,14 +46,16 @@ export class GridComponent implements OnInit {
 
     this.gridCtx.strokeStyle = GRID_COLORS.GRID_LINE;
 
-    for (let y = 0; y <= this.gridSize; y += GRID_CONSTANTS.CELL_SIZE) {
+    for (let y = 0, i = 0; y <= this.gridSize; y += GRID_CONSTANTS.CELL_SIZE, i++) {
+      this.gridCtx.lineWidth = (i % 5 === 0) ? 2 : 0.5;
       this.gridCtx.beginPath();
       this.gridCtx.moveTo(0, y);
       this.gridCtx.lineTo(this.gridSize, y);
       this.gridCtx.stroke();
     }
 
-    for (let x = 0; x <= this.gridSize; x += GRID_CONSTANTS.CELL_SIZE) {
+    for (let x = 0, i = 0; x <= this.gridSize; x += GRID_CONSTANTS.CELL_SIZE, i++) {
+      this.gridCtx.lineWidth = (i % 5 === 0) ? 2 : 0.5;
       this.gridCtx.beginPath();
       this.gridCtx.moveTo(x, 0);
       this.gridCtx.lineTo(x, this.gridSize);
