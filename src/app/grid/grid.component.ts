@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {GRID_COLORS, GRID_CONSTANTS} from "../app.constants";
 import {TransformationMatrixService} from "./services/transformation-matrix.service";
 import {Cell} from "./cell/cell.model";
