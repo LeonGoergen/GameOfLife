@@ -44,7 +44,7 @@ export class GridComponent implements OnInit {
     this.gridCtx.clearRect(0, 0, this.gridSize, this.gridSize);
     this.gridCtx.setTransform(...this.transformationMatrixService.matrix as any);
 
-    this.gridCtx.strokeStyle = '#000';
+    this.gridCtx.strokeStyle = 'lightgray';
 
     for (let y = 0; y <= this.gridSize; y += GRID_CONSTANTS.CELL_SIZE) {
       this.gridCtx.beginPath();
@@ -74,16 +74,43 @@ export class GridComponent implements OnInit {
   }
 
   drawCells(): void {
+    const visibleGridRange = this.getVisibleGridRange();
+
     this.gameCtx.clearRect(0, 0, this.gridSize, this.gridSize);
     this.gameCtx.setTransform(...this.transformationMatrixService.matrix as any);
-    this.gameCtx.fillStyle = '#3b3b3b';
 
-    this.cellsToCheck.forEach((key) => {
-      const cell = this.cells.get(key)!;
-      cell.alive
-        ? this.gameCtx.fillRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE)
-        : this.gameCtx.clearRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE);
-    });
+    this.gameCtx.fillStyle = '#3b3b3b';
+    this.gameCtx.fillRect(0, 0, this.gridSize, this.gridSize);
+
+    this.gameCtx.fillStyle = 'white';
+
+    for (let x = visibleGridRange.startCol; x <= visibleGridRange.endCol; x++) {
+      for (let y = visibleGridRange.startRow; y <= visibleGridRange.endRow; y++) {
+        const key = `${x * GRID_CONSTANTS.CELL_SIZE},${y * GRID_CONSTANTS.CELL_SIZE}`;
+        if (this.cellsToCheck.has(key)) {
+          const cell = this.cells.get(key);
+          if (cell && cell.alive) {
+            // Fill white color for alive cells
+            this.gameCtx.fillRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE);
+          }
+        }
+      }
+    }
+  }
+
+  getVisibleGridRange() {
+    const rect = this.gameCanvas.nativeElement.getBoundingClientRect();
+
+    const inverseMatrix = this.transformationMatrixService.inverseMatrix;
+    const topLeft = this.transformationMatrixService.transformPoint({x: 0, y: 0}, inverseMatrix);
+    const bottomRight = this.transformationMatrixService.transformPoint({x: rect.width, y: rect.height}, inverseMatrix);
+
+    const startCol = Math.floor(topLeft.x / GRID_CONSTANTS.CELL_SIZE);
+    const endCol = Math.ceil(bottomRight.x / GRID_CONSTANTS.CELL_SIZE);
+    const startRow = Math.floor(topLeft.y / GRID_CONSTANTS.CELL_SIZE);
+    const endRow = Math.ceil(bottomRight.y / GRID_CONSTANTS.CELL_SIZE);
+
+    return {startCol, endCol, startRow, endRow};
   }
 
   startPan(event: MouseEvent): void {

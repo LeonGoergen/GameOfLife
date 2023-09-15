@@ -67,4 +67,13 @@ export class TransformationMatrixService {
     this.translateX = point.x - (point.x - this.translateX) * amount;
     this.translateY = point.y - (point.y - this.translateY) * amount;
   }
+
+  transformPoint(point: { x: number; y: number }, matrix: number[]): { x: number; y: number } {
+    const [a, b, c, d, e, f] = matrix;
+
+    const x = a * point.x + c * point.y + e;
+    const y = b * point.x + d * point.y + f;
+
+    return { x, y };
+  }
 }
