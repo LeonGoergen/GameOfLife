@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {GRID_CONSTANTS, GRID_COLORS} from "../app.constants";
+import {GRID_COLORS, GRID_CONSTANTS} from "../app.constants";
 import {TransformationMatrixService} from "./services/transformation-matrix.service";
 import {Cell} from "./cell/cell.model";
 
@@ -68,7 +68,7 @@ export class GridComponent implements OnInit {
     const cellPositions = range.flatMap(x => range.map(y => ({ x, y })));
 
     cellPositions.forEach(({ x, y }) => {
-      const cell = new Cell(x, y, Math.random() < 0.1);
+      const cell = new Cell(x, y, false);
       this.cells.set(cell.key, cell);
       if (cell.alive) {
         this.cellsToCheck.add(cell.key);
@@ -169,5 +169,34 @@ export class GridComponent implements OnInit {
       this.drawGridLines();
       this.drawCells();
     });
+  }
+
+  onCanvasClick(event: MouseEvent): void {
+    if (this.panConfig.totalPanDistance > GRID_CONSTANTS.PAN_DISTANCE_THRESHOLD) return;
+
+    const key = this.getCellKeyByCoordinates(event);
+    const cell = this.cells.get(key);
+
+    if (!cell) {
+      return;
+    }
+
+    cell.alive = !cell.alive;
+    cell.alive ? this.cellsToCheck.add(key) : this.cellsToCheck.delete(key);
+
+    this.drawCells();
+  }
+
+  getCellKeyByCoordinates(event: MouseEvent) {
+    const rect = this.gameCanvas.nativeElement.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    const inverseMatrix = this.transformationMatrixService.inverseMatrix;
+    const worldPoint = this.transformationMatrixService.transformPoint({ x, y }, inverseMatrix);
+
+    const cellX = Math.floor(worldPoint.x / GRID_CONSTANTS.CELL_SIZE) * GRID_CONSTANTS.CELL_SIZE;
+    const cellY = Math.floor(worldPoint.y / GRID_CONSTANTS.CELL_SIZE) * GRID_CONSTANTS.CELL_SIZE;
+    return `${cellX},${cellY}`;
   }
 }

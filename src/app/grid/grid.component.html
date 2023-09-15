@@ -3,7 +3,8 @@
      (mousedown)="startPan($event)"
      (mousemove)="pan($event)"
      (mouseup)="endPan()"
-     (mouseout)="endPan()">
+     (mouseout)="endPan()"
+     (click)="onCanvasClick($event)">
   <canvas #gameCanvas class="layer" width="600" height="600"></canvas>
   <canvas #gridCanvas class="layer" width="600" height="600"></canvas>
 </div>
