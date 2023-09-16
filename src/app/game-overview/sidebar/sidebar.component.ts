@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {MatDialog} from "@angular/material/dialog";
+import {RulesComponent} from "./rules/rules.component";
 
 @Component({
   selector: 'app-sidebar',
@@ -8,7 +10,13 @@ import { Component } from '@angular/core';
 export class SidebarComponent {
   isSidebarMinimized = false;
 
+  constructor(public dialog: MatDialog) {}
+
   toggleSidebar() {
     this.isSidebarMinimized = !this.isSidebarMinimized;
+  }
+
+  openRulesDialog(): void {
+    this.dialog.open(RulesComponent);
   }
 }

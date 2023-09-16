@@ -95,7 +95,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     const gridSpacing = this.getGridSpacing();
 
     for (let y = 0, i = 0; y <= this.gridSize; y += GRID_CONSTANTS.CELL_SIZE * gridSpacing, i += gridSpacing) {
-      this.gridCtx.lineWidth = (i % 6 === 0) ? 2 : 0.5;
+      this.gridCtx.lineWidth = (i % 60 === 0) ? 2 : 0.5;
       this.gridCtx.beginPath();
       this.gridCtx.moveTo(0, y);
       this.gridCtx.lineTo(this.gridSize, y);
@@ -103,7 +103,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     for (let x = 0, i = 0; x <= this.gridSize; x += GRID_CONSTANTS.CELL_SIZE * gridSpacing, i += gridSpacing) {
-      this.gridCtx.lineWidth = (i % 6 === 0) ? 2 : 0.5;
+      this.gridCtx.lineWidth = (i % 60 === 0) ? 2 : 0.5;
       this.gridCtx.beginPath();
       this.gridCtx.moveTo(x, 0);
       this.gridCtx.lineTo(x, this.gridSize);

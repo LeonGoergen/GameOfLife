@@ -10,6 +10,9 @@ import { FormsModule } from "@angular/forms";
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RulesComponent } from './game-overview/sidebar/rules/rules.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -17,15 +20,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     GridComponent,
     GameOverviewComponent,
     GameControlsComponent,
-    SidebarComponent
+    SidebarComponent,
+    RulesComponent
   ],
-    imports: [
-      BrowserModule,
-      FormsModule,
-      MatIconModule,
-      MatDividerModule,
-      BrowserAnimationsModule,
-    ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    MatIconModule,
+    MatDividerModule,
+    BrowserAnimationsModule,
+    MatDialogModule,
+    NgOptimizedImage,
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
