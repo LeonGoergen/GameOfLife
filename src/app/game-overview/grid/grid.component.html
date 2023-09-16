@@ -7,4 +7,5 @@
      (click)="onCanvasClick($event)">
   <canvas #gameCanvas class="layer" [attr.width]="CANVAS_WIDTH" [attr.height]="CANVAS_HEIGHT"></canvas>
   <canvas #gridCanvas class="layer" [attr.width]="CANVAS_WIDTH" [attr.height]="CANVAS_HEIGHT"></canvas>
+  <div class="generation-counter">Generation: {{generationCount}}</div>
 </div>

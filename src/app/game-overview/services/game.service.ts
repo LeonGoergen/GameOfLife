@@ -6,22 +6,31 @@ import {Subject} from "rxjs";
 })
 export class GameService {
   private gameInterval: any;
+  private generationInterval: number = 1000;
 
   private nextGenerationSubject = new Subject<void>();
   private lastGenerationSubject = new Subject<void>();
   private resetSubject = new Subject<void>();
+  private gridSizeSubject = new Subject<number>();
 
   nextGeneration$ = this.nextGenerationSubject.asObservable();
   lastGeneration$ = this.lastGenerationSubject.asObservable();
   reset$ = this.resetSubject.asObservable();
+  gridSize$ = this.gridSizeSubject.asObservable();
 
   constructor() {}
 
   startAutoGeneration(interval: number): void {
     this.stopAutoGeneration();
+    this.generationInterval = interval;
     this.gameInterval = setInterval(() => {
       this.nextGeneration();
-    }, interval);
+    }, this.generationInterval);
+  }
+
+  updateGenerationInterval(interval: number): void {
+    this.generationInterval = interval;
+    if (this.gameInterval) { this.startAutoGeneration(interval); }
   }
 
   stopAutoGeneration(): void {
@@ -41,5 +50,9 @@ export class GameService {
 
   resetGrid(): void {
     this.resetSubject.next();
+  }
+
+  updateGridSize(size: number): void {
+    this.gridSizeSubject.next(size);
   }
 }

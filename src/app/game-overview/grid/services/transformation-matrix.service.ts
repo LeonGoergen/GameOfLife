@@ -59,27 +59,27 @@ export class TransformationMatrixService {
     ];
   }
 
-  private calculateBounds(): { maxTranslateX: number, minTranslateX: number, maxTranslateY: number, minTranslateY: number } {
+  private calculateBounds(maxGridSize: number): { maxTranslateX: number, minTranslateX: number, maxTranslateY: number, minTranslateY: number } {
     const maxTranslateX = 0;
-    const minTranslateX = GRID_CONSTANTS.CANVAS_WIDTH - (GRID_CONSTANTS.GRID_SIZE * this.scaleX);
+    const minTranslateX = GRID_CONSTANTS.CANVAS_WIDTH - (maxGridSize * this.scaleX);
 
     const maxTranslateY = 0;
-    const minTranslateY = GRID_CONSTANTS.CANVAS_HEIGHT - (GRID_CONSTANTS.GRID_SIZE * this.scaleY);
+    const minTranslateY = GRID_CONSTANTS.CANVAS_HEIGHT - (maxGridSize * this.scaleY);
 
     return { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY };
   }
 
-  translate(deltaX: number, deltaY: number): void {
+  translate(deltaX: number, deltaY: number, maxGridSize: number): void {
     const newTranslateX = this.translateX + deltaX;
     const newTranslateY = this.translateY + deltaY;
 
-    const { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY } = this.calculateBounds();
+    const { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY } = this.calculateBounds(maxGridSize);
 
     this.translateX = Math.min(maxTranslateX, Math.max(minTranslateX, newTranslateX));
     this.translateY = Math.min(maxTranslateY, Math.max(minTranslateY, newTranslateY));
   }
 
-  scaleAt(point: { x: number; y: number }, amount: number): void {
+  scaleAt(point: { x: number; y: number }, amount: number, maxGridSize: number): void {
     const newScale = this.scaleX * amount;
 
     if (newScale < GRID_CONSTANTS.MIN_ZOOM_LEVEL || newScale > GRID_CONSTANTS.MAX_ZOOM_LEVEL) {
@@ -91,7 +91,7 @@ export class TransformationMatrixService {
     this.translateX = point.x - (point.x - this.translateX) * amount;
     this.translateY = point.y - (point.y - this.translateY) * amount;
 
-    const { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY } = this.calculateBounds();
+    const { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY } = this.calculateBounds(maxGridSize);
 
     this.translateX = Math.min(maxTranslateX, Math.max(minTranslateX, this.translateX));
     this.translateY = Math.min(maxTranslateY, Math.max(minTranslateY, this.translateY));

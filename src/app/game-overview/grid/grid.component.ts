@@ -20,11 +20,13 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   private gameCtx!: CanvasRenderingContext2D;
 
   private gridSize!: number;
+  private userGridSize: number = GRID_CONSTANTS.INIT_GRID_SIZE;
 
   private cells: Map<string, Cell> = new Map();
   private cellsToCheck: Set<string> = new Set();
 
   private generationDeltas: Array<Map<string, boolean>> = [];
+  public generationCount: number = 0;
 
   private panConfig = {
     isPanning: false,
@@ -43,12 +45,10 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
       this.gameService.nextGeneration$.subscribe(() => this.onNextGeneration()),
       this.gameService.lastGeneration$.subscribe(() => this.onLastGeneration()),
       this.gameService.reset$.subscribe(() => this.initGrid()),
-    );
-  }
+      this.gameService.gridSize$.subscribe((size: number) => this.userGridSize = size),
+  )};
 
   ngAfterViewInit(): void {
-    this.gridSize = GRID_CONSTANTS.GRID_SIZE;
-
     this.gridCtx = this.gridCanvas.nativeElement.getContext('2d')!;
     this.gameCtx = this.gameCanvas.nativeElement.getContext('2d')!;
 
@@ -56,6 +56,13 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initGrid(): void {
+    this.cells.clear();
+    this.cellsToCheck.clear();
+    this.generationDeltas = [];
+    this.generationCount = 0;
+    this.gridSize = this.userGridSize;
+    this.gridCtx.clearRect(0, 0, this.gridSize, this.gridSize);
+    this.gameCtx.clearRect(0, 0, this.gridSize, this.gridSize);
     this.initializeGridCells();
     this.panToMiddle();
   }
@@ -195,7 +202,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     const deltaX = event.clientX - this.panConfig.lastPanX;
     const deltaY = event.clientY - this.panConfig.lastPanY;
 
-    this.transformationMatrixService.translate(deltaX, deltaY);
+    this.transformationMatrixService.translate(deltaX, deltaY, this.gridSize);
 
     this.panConfig.lastPanX = event.clientX;
     this.panConfig.lastPanY = event.clientY;
@@ -221,7 +228,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     const y = event.clientY - rect.top;
 
     const amount = 1 - event.deltaY * GRID_CONSTANTS.ZOOM_FACTOR;
-    this.transformationMatrixService.scaleAt({ x, y }, amount);
+    this.transformationMatrixService.scaleAt({ x, y }, amount, this.gridSize);
 
     requestAnimationFrame(() => {
       this.drawGridLines();
@@ -269,6 +276,8 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.cellsToCheck = newCellsToCheck;
     requestAnimationFrame(() => { this.drawCells(); });
+
+    if (this.cellsToCheck.size > 0) { this.generationCount += 1; }
   }
 
   private getAllCellsToCheck(): Set<string> {
@@ -330,6 +339,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     requestAnimationFrame(() => { this.drawCells(); });
+    this.generationCount -= 1;
   }
 
   ngOnDestroy(): void {

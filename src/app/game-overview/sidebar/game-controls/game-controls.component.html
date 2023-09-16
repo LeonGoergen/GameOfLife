@@ -1,5 +1,44 @@
-<button (click)="onNextGenerationClick()">Next Generation</button>
-<button (click)="onLastGenerationCLick()">Last Generation</button>
-<button (click)="onStartAutoGenerationClick()">Start Auto</button>
-<button (click)="onStopAutoGenerationClick()">Stop Auto</button>
-<button (click)="onResetGridClick()">Reset Grid</button>
+<div class="controls">
+  <!-- Generation Controls -->
+  <div class="control-group">
+    <button (click)="onResetGridClick()" title="Reset">
+      <div class="icon-container">
+        <mat-icon>settings_backup_restore</mat-icon>
+      </div>
+    </button>
+    <button (click)="onLastGenerationCLick()" title="Step Back">
+      <div class="icon-container">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </div>
+    </button>
+    <button (click)="onStopAutoGenerationClick()" title="Stop Auto Generation">
+      <div class="icon-container">
+        <mat-icon>pause</mat-icon>
+      </div>
+    </button>
+    <button (click)="onNextGenerationClick()" title="Step Forward">
+      <div class="icon-container">
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </div>
+    </button>
+    <button (click)="onStartAutoGenerationClick()" title="Start Auto Generation">
+      <div class="icon-container">
+        <mat-icon>keyboard_double_arrow_right</mat-icon>
+      </div>
+    </button>
+  </div>
+
+  <!-- Generation Speed Control -->
+  <div class="control-group input-control-group">
+    <label for="setSpeed">Speed: {{ generationsPerSecond }} Generations/s</label>
+    <input id="setSpeed" type="range" [(ngModel)]="generationsPerSecond" [max]="maxGenerationsPerSecond" [min]="minGenerationsPerSecond" step="0.1" (change)="updateAutoGenerationInterval()"/>
+  </div>
+
+  <!-- Grid Size Control -->
+  <div class="control-group input-control-group">
+    <label for="maxGridSize">Grid Size: {{ userMaxGridSize }}<sup>2</sup> Cells</label>
+    <input title="*Changes apply on grid reset*" id="maxGridSize" type="range" [(ngModel)]="userMaxGridSize" [max]="maxGridSize" [min]="minGridSize" (change)="setUserMaxGridSize(userMaxGridSize)"/>
+  </div>
+
+  <div class="flex-spacer"></div>
+</div>

@@ -1,1 +1,13 @@
-<app-game-controls></app-game-controls>
+<div class="sidebar" [class.minimized]="isSidebarMinimized">
+  <mat-icon class="toggle-icon" (click)="toggleSidebar()" matTooltip="Toggle Sidebar">
+    {{ isSidebarMinimized ? 'keyboard_arrow_right' : 'keyboard_arrow_left' }}
+  </mat-icon>
+
+  <div class="sidebar-content">
+    <button class="rules">Rules</button>
+    <button class="encyclopedia">Encyclopedia</button>
+    <mat-divider></mat-divider>
+    <div class="flex-spacer"></div>
+    <app-game-controls></app-game-controls>
+  </div>
+</div>

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {GameService} from "../../services/game.service";
+import {CONTROLS_CONSTANTS, GRID_CONSTANTS} from "../../../app.constants";
 
 @Component({
   selector: 'app-game-controls',
@@ -7,6 +8,14 @@ import {GameService} from "../../services/game.service";
   styleUrls: ['./game-controls.component.css']
 })
 export class GameControlsComponent {
+  generationsPerSecond: number = 3.0;
+  maxGenerationsPerSecond: number = CONTROLS_CONSTANTS.MAX_GEN_PER_SECOND;
+  minGenerationsPerSecond: number = CONTROLS_CONSTANTS.MIN_GEN_PER_SECOND;
+
+  userMaxGridSize: number = GRID_CONSTANTS.INIT_GRID_SIZE / GRID_CONSTANTS.CELL_SIZE;
+  maxGridSize: number = GRID_CONSTANTS.MAX_GRID_SIZE / GRID_CONSTANTS.CELL_SIZE;
+  minGridSize: number = GRID_CONSTANTS.MIN_GRID_SIZE / GRID_CONSTANTS.CELL_SIZE;
+
   constructor(private gameService: GameService) {}
 
   onNextGenerationClick(): void {
@@ -18,7 +27,7 @@ export class GameControlsComponent {
   }
 
   onStartAutoGenerationClick(): void {
-    this.gameService.startAutoGeneration(10); // 1000ms interval
+    this.gameService.startAutoGeneration(1000 / this.generationsPerSecond);
   }
 
   onStopAutoGenerationClick(): void {
@@ -27,5 +36,14 @@ export class GameControlsComponent {
 
   onResetGridClick(): void {
     this.gameService.resetGrid();
+  }
+
+  updateAutoGenerationInterval(): void {
+    this.gameService.updateGenerationInterval(1000 / this.generationsPerSecond);
+  }
+
+  setUserMaxGridSize(value: number): void {
+    this.userMaxGridSize = value;
+    this.gameService.updateGridSize(value * GRID_CONSTANTS.CELL_SIZE);
   }
 }
