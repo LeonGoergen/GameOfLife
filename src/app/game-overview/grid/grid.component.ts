@@ -24,6 +24,8 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   private cells: Map<string, Cell> = new Map();
   private cellsToCheck: Set<string> = new Set();
 
+  private generationDeltas: Array<Map<string, boolean>> = [];
+
   private panConfig = {
     isPanning: false,
     lastPanX: 0,
@@ -110,9 +112,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     cellPositions.forEach(({ x, y }) => {
       const cell = new Cell(x, y, false);
       this.cells.set(cell.key, cell);
-      if (cell.alive) {
-        this.cellsToCheck.add(cell.key);
-      }
+      if (cell.alive) { this.cellsToCheck.add(cell.key); }
     });
   }
 
@@ -172,22 +172,22 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   pan(event: MouseEvent): void {
-    if (this.panConfig.isPanning) {
-      const deltaX = event.clientX - this.panConfig.lastPanX;
-      const deltaY = event.clientY - this.panConfig.lastPanY;
+    if (!this.panConfig.isPanning) { return; }
 
-      this.transformationMatrixService.translate(deltaX, deltaY);
+    const deltaX = event.clientX - this.panConfig.lastPanX;
+    const deltaY = event.clientY - this.panConfig.lastPanY;
 
-      this.panConfig.lastPanX = event.clientX;
-      this.panConfig.lastPanY = event.clientY;
+    this.transformationMatrixService.translate(deltaX, deltaY);
 
-      this.panConfig.totalPanDistance += Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    this.panConfig.lastPanX = event.clientX;
+    this.panConfig.lastPanY = event.clientY;
 
-      requestAnimationFrame(() => {
-        this.drawGridLines();
-        this.drawCells();
-      });
-    }
+    this.panConfig.totalPanDistance += Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    requestAnimationFrame(() => {
+      this.drawGridLines();
+      this.drawCells();
+    });
   }
 
   endPan(): void {
@@ -212,14 +212,12 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onCanvasClick(event: MouseEvent): void {
-    if (this.panConfig.totalPanDistance > GRID_CONSTANTS.PAN_DISTANCE_THRESHOLD) return;
+    if (this.panConfig.totalPanDistance > GRID_CONSTANTS.PAN_DISTANCE_THRESHOLD) { return; }
 
     const key = this.getCellKeyByCoordinates(event);
     const cell = this.cells.get(key);
 
-    if (!cell) {
-      return;
-    }
+    if (!cell) { return; }
 
     cell.alive = !cell.alive;
     cell.alive ? this.cellsToCheck.add(key) : this.cellsToCheck.delete(key);
@@ -248,8 +246,11 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     allCellsToCheck.forEach(key => this.determineNewCellState(key, cellsToUpdate));
     this.updateCellsAndNewCellsToCheck(cellsToUpdate, newCellsToCheck);
 
+    this.generationDeltas.push(cellsToUpdate);
+    if (this.generationDeltas.length > 500) { this.generationDeltas.shift(); }
+
     this.cellsToCheck = newCellsToCheck;
-    this.drawCells();
+    requestAnimationFrame(() => { this.drawCells(); });
   }
 
   private getAllCellsToCheck(): Set<string> {
@@ -273,22 +274,18 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     let aliveNeighbors = 0;
     Object.values(cell.neighbors).forEach(neighbor => {
       const neighborKey = `${neighbor.x},${neighbor.y}`;
-      if (this.cells.get(neighborKey)?.alive)
-        aliveNeighbors += 1;
+      if (this.cells.get(neighborKey)?.alive) { aliveNeighbors += 1; }
     });
 
     const alive = cell.alive;
-    if (alive && (aliveNeighbors < 2 || aliveNeighbors > 3)) {
-      cellsToUpdate.set(key, false);
-    } else if (!alive && aliveNeighbors === 3) {
-      cellsToUpdate.set(key, true);
-    }
+    if (alive && (aliveNeighbors < 2 || aliveNeighbors > 3)) { cellsToUpdate.set(key, false); }
+    else if (!alive && aliveNeighbors === 3) { cellsToUpdate.set(key, true); }
   }
 
   private updateCellsAndNewCellsToCheck(cellsToUpdate: Map<string, boolean>, newCellsToCheck: Set<string>): void {
     cellsToUpdate.forEach((newState, key) => {
       const cell = this.cells.get(key);
-      if (!cell) {return;}
+      if (!cell) { return; }
       cell.alive = newState;
       newCellsToCheck.add(key);
       Object.values(cell.neighbors).forEach(neighbor => {
@@ -299,7 +296,22 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private onLastGeneration(): void {
+    if (this.generationDeltas.length <= 0) { return; }
 
+    const lastGenerationDeltas = this.generationDeltas.pop()!;
+
+    lastGenerationDeltas.forEach((newState, key) => {
+      const cell = this.cells.get(key);
+      if (!cell) { return; }
+      cell.alive = !newState;
+      this.cellsToCheck.add(key);
+      Object.values(cell.neighbors).forEach(neighbor => {
+        const neighborKey = `${neighbor.x},${neighbor.y}`;
+        this.cellsToCheck.add(neighborKey);
+      });
+    });
+
+    requestAnimationFrame(() => { this.drawCells(); });
   }
 
   ngOnDestroy(): void {
