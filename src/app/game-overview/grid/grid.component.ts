@@ -1,14 +1,16 @@
-import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
-import {GRID_COLORS, GRID_CONSTANTS} from "../app.constants";
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {GRID_COLORS, GRID_CONSTANTS} from "../../app.constants";
 import {TransformationMatrixService} from "./services/transformation-matrix.service";
 import {Cell} from "./cell/cell.model";
+import {GameService} from "../services/game.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
   styleUrls: ['./grid.component.css']
 })
-export class GridComponent implements AfterViewInit {
+export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   CANVAS_WIDTH = GRID_CONSTANTS.CANVAS_WIDTH;
   CANVAS_HEIGHT = GRID_CONSTANTS.CANVAS_HEIGHT;
   @ViewChild('gridCanvas', { static: true }) gridCanvas!: ElementRef<HTMLCanvasElement>;
@@ -29,7 +31,18 @@ export class GridComponent implements AfterViewInit {
     totalPanDistance: 0,
   };
 
-  constructor(private transformationMatrixService: TransformationMatrixService) {}
+  private subscriptions: Subscription[] = [];
+
+  constructor(private transformationMatrixService: TransformationMatrixService,
+              private gameService: GameService) {}
+
+  ngOnInit() {
+    this.subscriptions.push(
+      this.gameService.nextGeneration$.subscribe(() => this.onNextGeneration()),
+      //this.gameService.lastGeneration$.subscribe(() => this.onLastGeneration()),
+      //this.gameService.reset$.subscribe(() => this.resetGrid()),
+    );
+  }
 
   ngAfterViewInit(): void {
     this.gridSize = GRID_CONSTANTS.GRID_SIZE;
@@ -112,7 +125,7 @@ export class GridComponent implements AfterViewInit {
 
     const cellsToCheck = this.getCellsToCheck(visibleGridRange);
     cellsToCheck.forEach(cell => {
-      if (cell && cell.alive)
+      if (cell.alive)
         this.gameCtx.fillRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE);
     });
   }
@@ -221,5 +234,72 @@ export class GridComponent implements AfterViewInit {
     const cellX = Math.floor(worldPoint.x / GRID_CONSTANTS.CELL_SIZE) * GRID_CONSTANTS.CELL_SIZE;
     const cellY = Math.floor(worldPoint.y / GRID_CONSTANTS.CELL_SIZE) * GRID_CONSTANTS.CELL_SIZE;
     return `${cellX},${cellY}`;
+  }
+
+  onNextGeneration(): void {
+    const newCellsToCheck = new Set<string>();
+    const cellsToUpdate = new Map<string, boolean>();
+
+    const allCellsToCheck = this.getAllCellsToCheck();
+
+    // Step 2: Determine the new state for each cell in allCellsToCheck and store it in cellsToUpdate
+    allCellsToCheck.forEach(key => this.determineNewCellState(key, cellsToUpdate));
+
+    // Step 3: Update the cells' state and determine the cells to check in the next generation
+    this.updateCellsAndNewCellsToCheck(cellsToUpdate, newCellsToCheck);
+
+    // Step 4: Set the cellsToCheck for the next generation and redraw the cells
+    this.cellsToCheck = newCellsToCheck;
+    this.drawCells();
+  }
+
+  private getAllCellsToCheck(): Set<string> {
+    const allCellsToCheck = new Set<string>();
+    this.cellsToCheck.forEach(key => {
+      allCellsToCheck.add(key);
+      const cell = this.cells.get(key);
+      if (!cell) {return;}
+      Object.values(cell.neighbors).forEach(neighbor => {
+        const neighborKey = `${neighbor.x},${neighbor.y}`;
+        allCellsToCheck.add(neighborKey);
+      });
+    });
+    return allCellsToCheck;
+  }
+
+  private determineNewCellState(key: string, cellsToUpdate: Map<string, boolean>): void {
+    const cell = this.cells.get(key);
+    if (!cell) {return;}
+
+    let aliveNeighbors = 0;
+    Object.values(cell.neighbors).forEach(neighbor => {
+      const neighborKey = `${neighbor.x},${neighbor.y}`;
+      if (this.cells.get(neighborKey)?.alive)
+        aliveNeighbors += 1;
+    });
+
+    const alive = cell.alive;
+    if (alive && (aliveNeighbors < 2 || aliveNeighbors > 3)) {
+      cellsToUpdate.set(key, false);
+    } else if (!alive && aliveNeighbors === 3) {
+      cellsToUpdate.set(key, true);
+    }
+  }
+
+  private updateCellsAndNewCellsToCheck(cellsToUpdate: Map<string, boolean>, newCellsToCheck: Set<string>): void {
+    cellsToUpdate.forEach((newState, key) => {
+      const cell = this.cells.get(key);
+      if (!cell) {return;}
+      cell.alive = newState;
+      newCellsToCheck.add(key);
+      Object.values(cell.neighbors).forEach(neighbor => {
+        const neighborKey = `${neighbor.x},${neighbor.y}`;
+        newCellsToCheck.add(neighborKey);
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 }
