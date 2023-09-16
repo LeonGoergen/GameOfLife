@@ -56,9 +56,27 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initGrid(): void {
-    this.drawGridLines();
     this.initializeGridCells();
-    this.drawCells();
+    this.panToMiddle();
+  }
+
+  private panToMiddle(): void {
+    const middleX = this.gridSize / 2;
+    const middleY = this.gridSize / 2;
+
+    const canvasRect = this.gridCanvas.nativeElement.getBoundingClientRect();
+    const canvasMiddleX = canvasRect.width / 2;
+    const canvasMiddleY = canvasRect.height / 2;
+
+    const translateX = canvasMiddleX - middleX;
+    const translateY = canvasMiddleY - middleY;
+
+    this.transformationMatrixService.setTransform(1, 0, 0, 1, translateX, translateY);
+
+    requestAnimationFrame(() => {
+      this.drawGridLines();
+      this.drawCells();
+    });
   }
 
   drawGridLines(): void {

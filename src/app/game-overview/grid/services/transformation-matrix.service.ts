@@ -23,6 +23,15 @@ export class TransformationMatrixService {
     ];
   }
 
+  setTransform(scaleX: number, skewY: number, skewX: number, scaleY: number, translateX: number, translateY: number): void {
+    this.scaleX = scaleX;
+    this.skewY = skewY;
+    this.skewX = skewX;
+    this.scaleY = scaleY;
+    this.translateX = translateX;
+    this.translateY = translateY;
+  }
+
   get inverseMatrix() {
     const det = this.scaleX * this.scaleY - this.skewX * this.skewY;
 
