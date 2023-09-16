@@ -39,8 +39,8 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.subscriptions.push(
       this.gameService.nextGeneration$.subscribe(() => this.onNextGeneration()),
-      //this.gameService.lastGeneration$.subscribe(() => this.onLastGeneration()),
-      //this.gameService.reset$.subscribe(() => this.resetGrid()),
+      this.gameService.lastGeneration$.subscribe(() => this.onLastGeneration()),
+      this.gameService.reset$.subscribe(() => this.initGrid()),
     );
   }
 
@@ -48,9 +48,13 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     this.gridSize = GRID_CONSTANTS.GRID_SIZE;
 
     this.gridCtx = this.gridCanvas.nativeElement.getContext('2d')!;
-    this.drawGridLines();
-
     this.gameCtx = this.gameCanvas.nativeElement.getContext('2d')!;
+
+    this.initGrid();
+  }
+
+  initGrid(): void {
+    this.drawGridLines();
     this.initializeGridCells();
     this.drawCells();
   }
@@ -241,14 +245,9 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     const cellsToUpdate = new Map<string, boolean>();
 
     const allCellsToCheck = this.getAllCellsToCheck();
-
-    // Step 2: Determine the new state for each cell in allCellsToCheck and store it in cellsToUpdate
     allCellsToCheck.forEach(key => this.determineNewCellState(key, cellsToUpdate));
-
-    // Step 3: Update the cells' state and determine the cells to check in the next generation
     this.updateCellsAndNewCellsToCheck(cellsToUpdate, newCellsToCheck);
 
-    // Step 4: Set the cellsToCheck for the next generation and redraw the cells
     this.cellsToCheck = newCellsToCheck;
     this.drawCells();
   }
@@ -297,6 +296,10 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
         newCellsToCheck.add(neighborKey);
       });
     });
+  }
+
+  private onLastGeneration(): void {
+
   }
 
   ngOnDestroy(): void {
