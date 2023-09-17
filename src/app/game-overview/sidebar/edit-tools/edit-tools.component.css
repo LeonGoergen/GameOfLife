@@ -1,0 +1,33 @@
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  color: white;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.control-group button, .control-group mat-icon-button {
+  width: 3.4vw;  /* Set the width as per your requirement */
+  height: 3.4vw; /* Make height equal to width to keep the buttons square */
+  padding: 5px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #ffffff22;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-group button:hover, .control-group mat-icon-button:hover {
+  background-color: #ffffff44;
+}

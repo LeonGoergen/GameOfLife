@@ -1,0 +1,53 @@
+.content {
+  display: block;
+  padding: 16px;
+  max-width: 60vw;
+  max-height: 60vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #3b3b3b;
+}
+
+.heading {
+  margin-bottom: 16px;
+  color: #ffffff;
+}
+
+.paragraph {
+  margin-bottom: 16px;
+  color: #ffffff;
+  line-height: 1.6;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, #ffffff, #838383, #ffffff);
+  margin: 16px 0;
+}
+
+.pattern-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 8px 0;
+}
+
+.pattern {
+  align-items: center;
+}
+
+.pattern h3 {
+  flex: 1;
+  margin: 0;
+  color: #ffffff;
+  text-align: center;
+}
+
+.pattern-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+}

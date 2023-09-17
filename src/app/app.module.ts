@@ -15,6 +15,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import {NgOptimizedImage} from "@angular/common";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { EditToolsComponent } from './game-overview/sidebar/edit-tools/edit-tools.component';
+import { EncyclopediaComponent } from './game-overview/sidebar/encyclopedia/encyclopedia.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { EditToolsComponent } from './game-overview/sidebar/edit-tools/edit-tool
     GameControlsComponent,
     SidebarComponent,
     RulesComponent,
-    EditToolsComponent
+    EditToolsComponent,
+    EncyclopediaComponent
   ],
   imports: [
     BrowserModule,

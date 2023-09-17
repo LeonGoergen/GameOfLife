@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {MatDialog} from "@angular/material/dialog";
 import {RulesComponent} from "./rules/rules.component";
+import {EncyclopediaComponent} from "./encyclopedia/encyclopedia.component";
 
 @Component({
   selector: 'app-sidebar',
@@ -18,5 +19,9 @@ export class SidebarComponent {
 
   openRulesDialog(): void {
     this.dialog.open(RulesComponent);
+  }
+
+  openEncyclopediaDialog(): void {
+    this.dialog.open(EncyclopediaComponent);
   }
 }
