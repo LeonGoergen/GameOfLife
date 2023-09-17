@@ -40,5 +40,9 @@
     <input title="*Changes apply on grid reset*" id="maxGridSize" type="range" [(ngModel)]="userMaxGridSize" [max]="maxGridSize" [min]="minGridSize" (change)="setUserMaxGridSize(userMaxGridSize)"/>
   </div>
 
-  <div class="flex-spacer"></div>
+  <!-- Toroidal Grid Control -->
+  <div class="checkbox-control-group">
+    <mat-checkbox color="accent" [(ngModel)]="toroidalGrid" (change)="setToroidalGrid(toroidalGrid)"></mat-checkbox>
+    <label>Toroidal Grid</label>
+  </div>
 </div>

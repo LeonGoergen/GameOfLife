@@ -9,6 +9,7 @@ import {CONTROLS_CONSTANTS, GRID_CONSTANTS} from "../../../app.constants";
 })
 export class GameControlsComponent {
   generationsPerSecond: number = 3.0;
+  toroidalGrid: boolean = true;
   maxGenerationsPerSecond: number = CONTROLS_CONSTANTS.MAX_GEN_PER_SECOND;
   minGenerationsPerSecond: number = CONTROLS_CONSTANTS.MIN_GEN_PER_SECOND;
 
@@ -45,5 +46,10 @@ export class GameControlsComponent {
   setUserMaxGridSize(value: number): void {
     this.userMaxGridSize = value;
     this.gameService.updateGridSize(value * GRID_CONSTANTS.CELL_SIZE);
+  }
+
+  setToroidalGrid(value: boolean): void {
+    this.toroidalGrid = value;
+    this.gameService.updateToroidalGrid(value);
   }
 }

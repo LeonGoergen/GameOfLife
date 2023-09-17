@@ -13,6 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RulesComponent } from './game-overview/sidebar/rules/rules.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import {NgOptimizedImage} from "@angular/common";
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import {NgOptimizedImage} from "@angular/common";
     BrowserAnimationsModule,
     MatDialogModule,
     NgOptimizedImage,
+    MatCheckboxModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

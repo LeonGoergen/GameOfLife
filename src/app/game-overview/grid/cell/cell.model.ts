@@ -27,4 +27,17 @@ export class Cell {
       br: { x: this.x + GRID_CONSTANTS.CELL_SIZE, y: this.y + GRID_CONSTANTS.CELL_SIZE },
     };
   }
+
+  getToroidalNeighbors(gridSize: number) {
+    return {
+      tl: { x: (this.x - GRID_CONSTANTS.CELL_SIZE + gridSize) % gridSize, y: (this.y - GRID_CONSTANTS.CELL_SIZE + gridSize) % gridSize },
+      t: { x: this.x, y: (this.y - GRID_CONSTANTS.CELL_SIZE + gridSize) % gridSize },
+      tr: { x: (this.x + GRID_CONSTANTS.CELL_SIZE) % gridSize, y: (this.y - GRID_CONSTANTS.CELL_SIZE + gridSize) % gridSize },
+      l: { x: (this.x - GRID_CONSTANTS.CELL_SIZE + gridSize) % gridSize, y: this.y },
+      r: { x: (this.x + GRID_CONSTANTS.CELL_SIZE) % gridSize, y: this.y },
+      bl: { x: (this.x - GRID_CONSTANTS.CELL_SIZE + gridSize) % gridSize, y: (this.y + GRID_CONSTANTS.CELL_SIZE) % gridSize },
+      b: { x: this.x, y: (this.y + GRID_CONSTANTS.CELL_SIZE) % gridSize },
+      br: { x: (this.x + GRID_CONSTANTS.CELL_SIZE) % gridSize, y: (this.y + GRID_CONSTANTS.CELL_SIZE) % gridSize },
+    };
+  }
 }

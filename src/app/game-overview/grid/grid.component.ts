@@ -21,6 +21,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private gridSize!: number;
   private userGridSize: number = GRID_CONSTANTS.INIT_GRID_SIZE;
+  private isToroidal: boolean = true;
 
   private cells: Map<string, Cell> = new Map();
   private cellsToCheck: Set<string> = new Set();
@@ -46,6 +47,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
       this.gameService.lastGeneration$.subscribe(() => this.onLastGeneration()),
       this.gameService.reset$.subscribe(() => this.initGrid()),
       this.gameService.gridSize$.subscribe((size: number) => this.userGridSize = size),
+      this.gameService.toroidalGrid$.subscribe((isToroidal: boolean) => this.isToroidal = isToroidal),
   )};
 
   ngAfterViewInit(): void {
@@ -95,7 +97,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     const gridSpacing = this.getGridSpacing();
 
     for (let y = 0, i = 0; y <= this.gridSize; y += GRID_CONSTANTS.CELL_SIZE * gridSpacing, i += gridSpacing) {
-      this.gridCtx.lineWidth = (i % 60 === 0) ? 2 : 0.5;
+      this.gridCtx.lineWidth = (i % 6 === 0) ? 2 : 0.5;
       this.gridCtx.beginPath();
       this.gridCtx.moveTo(0, y);
       this.gridCtx.lineTo(this.gridSize, y);
@@ -103,7 +105,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     for (let x = 0, i = 0; x <= this.gridSize; x += GRID_CONSTANTS.CELL_SIZE * gridSpacing, i += gridSpacing) {
-      this.gridCtx.lineWidth = (i % 60 === 0) ? 2 : 0.5;
+      this.gridCtx.lineWidth = (i % 6 === 0) ? 2 : 0.5;
       this.gridCtx.beginPath();
       this.gridCtx.moveTo(x, 0);
       this.gridCtx.lineTo(x, this.gridSize);
@@ -280,45 +282,42 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.cellsToCheck.size > 0) { this.generationCount += 1; }
   }
 
+  private getNeighborKeys(cell: Cell): string[] {
+    const neighbors = this.isToroidal ? cell.getToroidalNeighbors(this.gridSize) : cell.neighbors;
+    return Object.values(neighbors).map(neighbor => `${neighbor.x},${neighbor.y}`);
+  }
+
   private getAllCellsToCheck(): Set<string> {
     const allCellsToCheck = new Set<string>();
     this.cellsToCheck.forEach(key => {
       allCellsToCheck.add(key);
       const cell = this.cells.get(key);
-      if (!cell) {return;}
-      Object.values(cell.neighbors).forEach(neighbor => {
-        const neighborKey = `${neighbor.x},${neighbor.y}`;
-        allCellsToCheck.add(neighborKey);
-      });
+      if (cell) {
+        this.getNeighborKeys(cell).forEach(neighborKey => allCellsToCheck.add(neighborKey));
+      }
     });
     return allCellsToCheck;
   }
 
   private determineNewCellState(key: string, cellsToUpdate: Map<string, boolean>): void {
     const cell = this.cells.get(key);
-    if (!cell) {return;}
+    if (!cell) { return; }
 
-    let aliveNeighbors = 0;
-    Object.values(cell.neighbors).forEach(neighbor => {
-      const neighborKey = `${neighbor.x},${neighbor.y}`;
-      if (this.cells.get(neighborKey)?.alive) { aliveNeighbors += 1; }
-    });
+    const aliveNeighbors = this.getNeighborKeys(cell)
+      .reduce((count, neighborKey) => count + (this.cells.get(neighborKey)?.alive ? 1 : 0), 0);
 
-    const alive = cell.alive;
-    if (alive && (aliveNeighbors < 2 || aliveNeighbors > 3)) { cellsToUpdate.set(key, false); }
-    else if (!alive && aliveNeighbors === 3) { cellsToUpdate.set(key, true); }
+    const shouldUpdate = cell.alive ? (aliveNeighbors < 2 || aliveNeighbors > 3) : (aliveNeighbors === 3);
+    if (shouldUpdate) { cellsToUpdate.set(key, !cell.alive); }
   }
 
   private updateCellsAndNewCellsToCheck(cellsToUpdate: Map<string, boolean>, newCellsToCheck: Set<string>): void {
     cellsToUpdate.forEach((newState, key) => {
       const cell = this.cells.get(key);
       if (!cell) { return; }
+
       cell.alive = newState;
       newCellsToCheck.add(key);
-      Object.values(cell.neighbors).forEach(neighbor => {
-        const neighborKey = `${neighbor.x},${neighbor.y}`;
-        newCellsToCheck.add(neighborKey);
-      });
+      this.getNeighborKeys(cell).forEach(neighborKey => newCellsToCheck.add(neighborKey));
     });
   }
 
@@ -330,12 +329,10 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     lastGenerationDeltas.forEach((newState, key) => {
       const cell = this.cells.get(key);
       if (!cell) { return; }
+
       cell.alive = !newState;
       this.cellsToCheck.add(key);
-      Object.values(cell.neighbors).forEach(neighbor => {
-        const neighborKey = `${neighbor.x},${neighbor.y}`;
-        this.cellsToCheck.add(neighborKey);
-      });
+      this.getNeighborKeys(cell).forEach(neighborKey => this.cellsToCheck.add(neighborKey));
     });
 
     requestAnimationFrame(() => { this.drawCells(); });

@@ -12,11 +12,13 @@ export class GameService {
   private lastGenerationSubject = new Subject<void>();
   private resetSubject = new Subject<void>();
   private gridSizeSubject = new Subject<number>();
+  private toroidalGridSubject = new Subject<boolean>();
 
   nextGeneration$ = this.nextGenerationSubject.asObservable();
   lastGeneration$ = this.lastGenerationSubject.asObservable();
   reset$ = this.resetSubject.asObservable();
   gridSize$ = this.gridSizeSubject.asObservable();
+  toroidalGrid$ = this.toroidalGridSubject.asObservable();
 
   constructor() {}
 
@@ -54,5 +56,9 @@ export class GameService {
 
   updateGridSize(size: number): void {
     this.gridSizeSubject.next(size);
+  }
+
+  updateToroidalGrid(value: boolean): void {
+    this.toroidalGridSubject.next(value);
   }
 }

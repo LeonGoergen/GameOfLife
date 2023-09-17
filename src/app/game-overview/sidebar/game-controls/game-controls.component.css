@@ -83,10 +83,21 @@
   border-radius: 5px;
 }
 
-.mat-divider {
-  margin-top: 20px;
-  width: 120%;
-  background-color: white;
+.checkbox-control-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+}
+
+.checkbox-control-group mat-checkbox {
+  margin: 0;
+}
+
+.checkbox-control-group label {
+  margin: 0;
+  font-size: 16px; /* Adjust based on your preference */
+  cursor: pointer;
 }
 
 mat-icon {
