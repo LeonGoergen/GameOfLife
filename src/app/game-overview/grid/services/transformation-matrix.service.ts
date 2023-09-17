@@ -82,7 +82,19 @@ export class TransformationMatrixService {
   scaleAt(point: { x: number; y: number }, amount: number, maxGridSize: number): void {
     const newScale = this.scaleX * amount;
 
-    if (newScale < GRID_CONSTANTS.MIN_ZOOM_LEVEL || newScale > GRID_CONSTANTS.MAX_ZOOM_LEVEL) { return; }
+    // Calculate the new bounds after the potential scale
+    const potentialMinTranslateX = GRID_CONSTANTS.CANVAS_WIDTH - (maxGridSize * newScale);
+    const potentialMinTranslateY = GRID_CONSTANTS.CANVAS_HEIGHT - (maxGridSize * newScale);
+
+    // If the potential bounds indicate that we would see beyond the grid, do not allow this zoom level
+    if (potentialMinTranslateX > 0 || potentialMinTranslateY > 0) {
+      return;
+    }
+
+    // Existing min/max zoom level checks
+    if (newScale < GRID_CONSTANTS.MIN_ZOOM_LEVEL || newScale > GRID_CONSTANTS.MAX_ZOOM_LEVEL) {
+      return;
+    }
 
     this.scaleX = this.scaleY = newScale;
 
