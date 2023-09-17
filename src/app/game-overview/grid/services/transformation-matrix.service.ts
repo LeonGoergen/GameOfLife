@@ -82,15 +82,7 @@ export class TransformationMatrixService {
   scaleAt(point: { x: number; y: number }, amount: number, maxGridSize: number): void {
     const newScale = this.scaleX * amount;
 
-    // Calculate the minimum zoom level dynamically based on grid size and canvas size
-    const minZoomLevelBasedOnGrid = Math.max(
-      GRID_CONSTANTS.CANVAS_WIDTH / (maxGridSize * this.scaleX),
-      GRID_CONSTANTS.CANVAS_HEIGHT / (maxGridSize * this.scaleY)
-    );
-
-    const minZoomLevel = Math.max(GRID_CONSTANTS.MIN_ZOOM_LEVEL, minZoomLevelBasedOnGrid);
-
-    if (newScale < minZoomLevel || newScale > GRID_CONSTANTS.MAX_ZOOM_LEVEL) { return; }
+    if (newScale < GRID_CONSTANTS.MIN_ZOOM_LEVEL || newScale > GRID_CONSTANTS.MAX_ZOOM_LEVEL) { return; }
 
     this.scaleX = this.scaleY = newScale;
 
