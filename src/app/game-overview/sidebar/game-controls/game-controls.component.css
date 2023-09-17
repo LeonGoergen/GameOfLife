@@ -96,13 +96,6 @@
 
 .checkbox-control-group label {
   margin: 0;
-  font-size: 16px; /* Adjust based on your preference */
+  font-size: 16px;
   cursor: pointer;
-}
-
-mat-icon {
-  font-size: 24px;
-  width: 24px;
-  height: 24px;
-  display: block;
 }

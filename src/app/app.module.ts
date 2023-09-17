@@ -14,6 +14,7 @@ import { RulesComponent } from './game-overview/sidebar/rules/rules.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import {NgOptimizedImage} from "@angular/common";
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import { EditToolsComponent } from './game-overview/sidebar/edit-tools/edit-tools.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     GameOverviewComponent,
     GameControlsComponent,
     SidebarComponent,
-    RulesComponent
+    RulesComponent,
+    EditToolsComponent
   ],
   imports: [
     BrowserModule,
