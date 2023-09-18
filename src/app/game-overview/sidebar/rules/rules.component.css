@@ -31,7 +31,10 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin: 8px 2vw;
+  margin: 16px 0;
+  background-color: #2f2f2f;
+  padding: 10px;
+  border-radius: 5px;
 }
 
 .rule h3 {

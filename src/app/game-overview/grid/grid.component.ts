@@ -269,13 +269,13 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onNextGeneration(): void {
     const newCellsToCheck = new Set<string>();
-    const cellsToUpdate = new Map<string, boolean>();
+    const aliveCells = new Map<string, boolean>();
 
     const allCellsToCheck = this.getAllCellsToCheck();
-    allCellsToCheck.forEach(key => this.determineNewCellState(key, cellsToUpdate));
-    this.updateCellsAndNewCellsToCheck(cellsToUpdate, newCellsToCheck);
+    allCellsToCheck.forEach(key => this.determineNewCellState(key, aliveCells));
+    this.convertToSet(aliveCells, newCellsToCheck);
 
-    this.generationDeltas.push(cellsToUpdate);
+    this.generationDeltas.push(aliveCells);
     if (this.generationDeltas.length > 500) { this.generationDeltas.shift(); }
 
     this.cellsToCheck = newCellsToCheck;
@@ -301,7 +301,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     return allCellsToCheck;
   }
 
-  private determineNewCellState(key: string, cellsToUpdate: Map<string, boolean>): void {
+  private determineNewCellState(key: string, aliveCells: Map<string, boolean>): void {
     const cell = this.cells.get(key);
     if (!cell) { return; }
 
@@ -309,17 +309,20 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
       .reduce((count, neighborKey) => count + (this.cells.get(neighborKey)?.alive ? 1 : 0), 0);
 
     const shouldUpdate = cell.alive ? (aliveNeighbors < 2 || aliveNeighbors > 3) : (aliveNeighbors === 3);
-    if (shouldUpdate) { cellsToUpdate.set(key, !cell.alive); }
+
+    if (shouldUpdate)
+      aliveCells.set(key, !cell.alive);
+    else if (cell.alive)
+      aliveCells.set(key, cell.alive);
   }
 
-  private updateCellsAndNewCellsToCheck(cellsToUpdate: Map<string, boolean>, newCellsToCheck: Set<string>): void {
-    cellsToUpdate.forEach((newState, key) => {
+  private convertToSet(aliveCells: Map<string, boolean>, newCellsToCheck: Set<string>): void {
+    aliveCells.forEach((newState, key) => {
       const cell = this.cells.get(key);
       if (!cell) { return; }
 
       cell.alive = newState;
       newCellsToCheck.add(key);
-      this.getNeighborKeys(cell).forEach(neighborKey => newCellsToCheck.add(neighborKey));
     });
   }
 

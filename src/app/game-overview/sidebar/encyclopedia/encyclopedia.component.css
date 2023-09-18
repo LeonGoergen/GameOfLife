@@ -1,23 +1,29 @@
 .content {
   display: block;
   padding: 16px;
-  max-width: 60vw;
-  max-height: 60vh;
+  width: 60vw;
+  height: 60vh;
   overflow-y: scroll;
   overflow-x: hidden;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #3b3b3b;
+  color: #ffffff;
+  line-height: 1.6;
+}
+
+.main-heading {
+  margin-bottom: 16px;
+  font-size: 2em;
+  text-align: center;
 }
 
 .heading {
   margin-bottom: 16px;
-  color: #ffffff;
+  font-size: 1.5em;
 }
 
 .paragraph {
   margin-bottom: 16px;
-  color: #ffffff;
-  line-height: 1.6;
 }
 
 .divider {
@@ -27,27 +33,46 @@
   margin: 16px 0;
 }
 
+ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+ul li {
+  margin-bottom: 16px;
+}
+
 .pattern-row {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   gap: 16px;
   margin: 8px 0;
 }
 
 .pattern {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  width: 30%;
+  background-color: #2f2f2f;
+  padding: 10px;
+  border-radius: 5px;
 }
 
 .pattern h3 {
-  flex: 1;
-  margin: 0;
-  color: #ffffff;
+  margin: 0 0 8px 0;
   text-align: center;
+  font-size: 1.2em;
 }
 
 .pattern-image {
   max-width: 100%;
   height: auto;
   border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.pattern p {
+  text-align: center;
 }
