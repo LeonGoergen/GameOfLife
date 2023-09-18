@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
+import { categories } from '../../../../assets/patterns';
 
 @Component({
   selector: 'app-encyclopedia',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./encyclopedia.component.css']
 })
 export class EncyclopediaComponent {
-
+  categories = categories;
 }

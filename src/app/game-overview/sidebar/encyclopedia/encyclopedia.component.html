@@ -1,177 +1,21 @@
 <div class="content">
   <h2 class="main-heading">Encyclopedia</h2>
-  <p class="paragraph">In the course of a typical simulation in the Game of Life, a variety of distinct patterns emerge which are essential to the unfolding dynamics of the environment. These patterns can be broadly categorized based on their behaviors into static patterns, oscillating patterns, and moving patterns.</p>
-  <ul>
-    <li>
-      <h3 class="heading">Static Patterns</h3>
-      <p class="paragraph">These are formations that remain stationary, retaining their structure over successive generations without undergoing any change. They represent a stable state in the simulation.</p>
-    </li>
-    <li>
-      <h3 class="heading">Oscillating Patterns</h3>
-      <p class="paragraph">Oscillating patterns are characterized by a repetitive cycle of transformations, wherein they fluctuate between two or more states in a regular pattern. These oscillations create a dynamic yet predictable series of formations as time progresses.</p>
-    </li>
-    <li>
-      <h3 class="heading">Moving Patterns</h3>
-      <p class="paragraph">Also known as "spaceships," these patterns exhibit locomotion across the grid, altering their position over sequential generations. They traverse the environment, potentially interacting with other entities on the grid.</p>
-    </li>
-    <li>
-      <h3 class="heading">Generative Patterns</h3>
-      <p class="paragraph"> In addition to the above categories, there are generative patterns that spawn other formations, leading to rich and complex evolving dynamics. They may give birth to a range of other patterns, encompassing static, oscillating, or moving types, thereby introducing new elements into the simulation.</p>
-    </li>
-  </ul>
-  <p class="paragraph">The upcoming sections provide an illustrative guide to the most frequently encountered patterns in the Game of Life, offering insights into their characteristics and the roles they play in the larger simulation ecology."</p>
+  <p class="paragraph">
+    In the course of a typical simulation in the Game of Life, a variety of distinct patterns emerge which are essential to the unfolding dynamics of the environment.
+    These patterns can be broadly categorized based on their behaviors into static patterns, oscillating patterns, and moving patterns.
+    The following sections provide an illustrative guide to the most common patterns that emerge in the Game of Life.
+  </p>
 
-  <hr class="divider">
-  <h2 class="heading">Static Patterns</h2>
-
-  <div class="pattern-row">
-    <div class="pattern">
-      <h3>Block</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Block">
-      <p class="paragraph">A 2x2 grid of alive cells</p>
-    </div>
-    <div class="pattern">
-      <h3>Beehive</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Beehive">
-      <p class="paragraph">A formation of six cells that resembles a beehive</p>
-    </div>
-    <div class="pattern">
-      <h3>Loaf</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Loaf">
-      <p class="paragraph">A configuration of seven cells that somewhat looks like a loaf of bread</p>
+  <div *ngFor="let category of categories">
+    <hr class="divider">
+    <h2 class="heading">{{ category.title }}</h2>
+    <p class="paragraph">{{ category.description }}</p>
+    <div class="pattern-container">
+      <div class="pattern" *ngFor="let pattern of category.patterns">
+        <h3>{{ pattern.title }}</h3>
+        <img class="pattern-image" [src]="pattern.img" [alt]="pattern.title">
+        <p class="paragraph">{{ pattern.description }}</p>
+      </div>
     </div>
   </div>
-
-  <div class="pattern-row">
-    <div class="pattern">
-      <h3>Boat</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Boat">
-      <p class="paragraph">A pattern of five cells that forms a shape reminiscent of a boat</p>
-    </div>
-    <div class="pattern">
-      <h3>Tub</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Tub">
-      <p class="paragraph">A smaller formation of four cells creating a tub-like shape</p>
-    </div>
-    <div class="pattern">
-      <h3>Pond</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Pond">
-      <p class="paragraph">A configuration of eight cells that outline the shape of a pond</p>
-    </div>
-  </div>
-
-  <hr class="divider">
-  <h2 class="heading">Oscillating Patterns</h2>
-  <div class="pattern-row">
-    <div class="pattern">
-      <h3>Blinker</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Blinker">
-      <p class="paragraph">A line of three cells that alternates between a vertical and horizontal orientation</p>
-    </div>
-    <div class="pattern">
-      <h3>Toad</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Toad">
-      <p class="paragraph">A formation of six cells that alternates between two different states</p>
-    </div>
-    <div class="pattern">
-      <h3>Beacon</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Beacon">
-      <p class="paragraph">A pattern that oscillates between a 2x2 block and two separated blocks</p>
-    </div>
-  </div>
-
-  <div class="pattern-row">
-    <div class="pattern">
-      <h3>Pulsar</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Pulsar">
-      <p class="paragraph">A larger oscillator that has a period of 3 and forms a distinctive star-like pattern</p>
-    </div>
-    <div class="pattern">
-      <h3>Pentadecathlon</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Pentadecathlon">
-      <p class="paragraph">An oscillator with a period of 15, having a quite long and narrow shape</p>
-    </div>
-    <div class="pattern">
-      <h3>Clock</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Clock">
-      <p class="paragraph">A smaller oscillator with a period of 2, shifting between two configurations resembling a clock's hands</p>
-    </div>
-  </div>
-
-  <hr class="divider">
-  <h2 class="heading">Moving Patterns</h2>
-  <div class="pattern-row">
-    <div class="pattern">
-      <h3>Glider</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Glider">
-      <p class="paragraph">A small pattern that moves diagonally across the grid, one step every four generations</p>
-    </div>
-    <div class="pattern">
-      <h3>Lightweight Spaceship</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Lightweight Spaceship">
-      <p class="paragraph">A pattern that moves either horizontally or vertically across the grid over the span of four generations</p>
-    </div>
-    <div class="pattern">
-      <h3>Middleweight Spaceship</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Middleweight Spaceship">
-      <p class="paragraph">Similar to the LWSS but slightly larger, traversing the grid over four generations</p>
-    </div>
-  </div>
-
-  <div class="pattern-row">
-    <div class="pattern">
-      <h3>Heavyweight Spaceship</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Heavyweight Spaceship">
-      <p class="paragraph">A larger version of the MWSS, moving in a steady pattern over four generations</p>
-    </div>
-    <div class="pattern">
-      <h3>Loafer</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Loafer">
-      <p class="paragraph">A spaceship that drifts slowly across the grid in a straight line</p>
-    </div>
-    <div class="pattern">
-      <h3>Crawler</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Crawler">
-      <p class="paragraph">A category of spaceships that move slowly, often diagonally, across the grid</p>
-    </div>
-  </div>
-
-  <hr class="divider">
-  <h2 class="heading">Generative Patterns</h2>
-  <div class="pattern-row">
-    <div class="pattern">
-      <h3>Glider Gun</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Glider Gun">
-      <p class="paragraph">A configuration that continuously generates gliders, producing a stream of them</p>
-    </div>
-    <div class="pattern">
-      <h3>Gosper's puffer train</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Gosper's puffer train">
-      <p class="paragraph">A moving pattern that leaves a trail of static "smoke" patterns as it moves</p>
-    </div>
-    <div class="pattern">
-      <h3>R-pentomino</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="R-pentomino">
-      <p class="paragraph">A pattern that, despite its initial small size, evolves into a chaotic and long-lasting configuration, eventually stabilizing with a collection of static patterns and oscillators</p>
-    </div>
-  </div>
-
-  <div class="pattern-row">
-    <div class="pattern">
-      <h3>Diehard</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Diehard">
-      <p class="paragraph">A pattern that takes 130 generations to stabilize, eventually disappearing completely, leaving no cells behind</p>
-    </div>
-    <div class="pattern">
-      <h3>Acorn</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Acorn">
-      <p class="paragraph">A small pattern that exhibits a chaotic growth, eventually stabilizing into a combination of still lifes, oscillators, and spaceships</p>
-    </div>
-    <div class="pattern">
-      <h3>Bunnies</h3>
-      <img class="pattern-image" src="assets/rep.gif" alt="Bunnies">
-      <p class="paragraph">A pattern that generates a chaotic growth, stabilizing after several generations into a mixture of still lifes and oscillators</p>
-    </div>
-  </div>
-
 </div>

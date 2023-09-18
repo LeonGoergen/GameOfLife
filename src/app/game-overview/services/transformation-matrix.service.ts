@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GRID_CONSTANTS } from '../../../app.constants';
+import { GRID_CONSTANTS } from '../../app.constants';
 
 @Injectable({
   providedIn: 'root',

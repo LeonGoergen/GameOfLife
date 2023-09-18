@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {GRID_COLORS, GRID_CONSTANTS} from "../../app.constants";
-import {TransformationMatrixService} from "./services/transformation-matrix.service";
+import {TransformationMatrixService} from "../services/transformation-matrix.service";
 import {Cell} from "./cell/cell.model";
 import {GameService} from "../services/game.service";
 import {Subscription} from "rxjs";
