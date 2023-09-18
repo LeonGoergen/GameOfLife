@@ -15,6 +15,7 @@
         <h3>{{ pattern.title }}</h3>
         <img class="pattern-image" [src]="pattern.img" [alt]="pattern.title">
         <p class="paragraph">{{ pattern.description }}</p>
+        <button (click)="copyToClipboard(pattern.rle)"><mat-icon>content_copy</mat-icon></button>
       </div>
     </div>
   </div>

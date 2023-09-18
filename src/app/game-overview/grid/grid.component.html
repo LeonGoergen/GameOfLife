@@ -4,7 +4,8 @@
      (mousemove)="pan($event)"
      (mouseup)="endPan()"
      (mouseout)="endPan()"
-     (click)="onCanvasClick($event)">
+     (click)="onCanvasClick($event)"
+     (contextmenu)="onRightClick($event)">
   <canvas #gameCanvas class="layer" [attr.width]="CANVAS_WIDTH" [attr.height]="CANVAS_HEIGHT"></canvas>
   <canvas #gridCanvas class="layer" [attr.width]="CANVAS_WIDTH" [attr.height]="CANVAS_HEIGHT"></canvas>
   <div class="generation-counter">Generation: {{generationCount}}</div>

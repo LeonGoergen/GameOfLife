@@ -4,6 +4,7 @@ import {TransformationMatrixService} from "../services/transformation-matrix.ser
 import {Cell} from "./cell/cell.model";
 import {GameService} from "../services/game.service";
 import {Subscription} from "rxjs";
+import {RleService} from "../services/rle.service";
 
 @Component({
   selector: 'app-grid',
@@ -39,7 +40,8 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   constructor(private transformationMatrixService: TransformationMatrixService,
-              private gameService: GameService) {}
+              private gameService: GameService,
+              private rleService: RleService) {}
 
   ngOnInit() {
     this.subscriptions.push(
@@ -48,6 +50,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
       this.gameService.reset$.subscribe(() => this.initGrid()),
       this.gameService.gridSize$.subscribe((size: number) => this.userGridSize = size),
       this.gameService.toroidalGrid$.subscribe((isToroidal: boolean) => this.isToroidal = isToroidal),
+      this.rleService.rleLoaded$.subscribe((cells: Cell[]) => this.onCellsLoaded(cells)),
   )};
 
   ngAfterViewInit(): void {
@@ -251,6 +254,24 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     cell.alive = !cell.alive;
     cell.alive ? this.cellsToCheck.add(key) : this.cellsToCheck.delete(key);
 
+    this.drawCells();
+  }
+
+  async onRightClick(event: MouseEvent): Promise<void> {
+    event.preventDefault();
+    const key = this.getCellKeyByCoordinates(event);
+    const cell = this.cells.get(key)!;
+    const rleString = await navigator.clipboard.readText();
+    this.rleService.decodeRLE(rleString, cell.x, cell.y);
+  }
+
+  onCellsLoaded(cells: Cell[]): void {
+    cells.forEach(cell => {
+      this.cells.set(cell.key, cell);
+      this.cellsToCheck.add(cell.key);
+    });
+
+    console.log(this.cellsToCheck.size)
     this.drawCells();
   }
 
