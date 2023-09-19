@@ -1,3 +1,15 @@
+:root {
+  --primary-color: #3f51b5; /* Indigo */
+  --accent-color: #e91e63; /* Pink */
+  --background-color-dark: #3b3b3b;
+  --background-color-darker: #2f2f2f;
+  --text-color: #ffffff;
+  --divider-color: #838383;
+  --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-dark: 0 4px 6px rgba(0, 0, 0, 0.2);
+  --shadow-darker: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
 body {
   margin: 0;
   overflow: hidden;
