@@ -8,6 +8,7 @@ import {CONTROLS_CONSTANTS, GRID_CONSTANTS} from "../../../app.constants";
   styleUrls: ['./game-controls.component.css']
 })
 export class GameControlsComponent {
+  highlightedButton: 'play' | 'pause' | null = null;
   generationsPerSecond: number = 3.0;
   toroidalGrid: boolean = true;
   maxGenerationsPerSecond: number = CONTROLS_CONSTANTS.MAX_GEN_PER_SECOND;
@@ -28,10 +29,12 @@ export class GameControlsComponent {
   }
 
   onStartAutoGenerationClick(): void {
+    this.highlightedButton = 'play';
     this.gameService.startAutoGeneration(1000 / this.generationsPerSecond);
   }
 
   onStopAutoGenerationClick(): void {
+    this.highlightedButton = 'pause';
     this.gameService.stopAutoGeneration();
   }
 
