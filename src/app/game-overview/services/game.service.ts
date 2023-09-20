@@ -13,12 +13,20 @@ export class GameService {
   private resetSubject = new Subject<void>();
   private gridSizeSubject = new Subject<number>();
   private toroidalGridSubject = new Subject<boolean>();
+  private saveCheckpointSubject = new Subject<void>();
+  private checkpointGenerationSubject = new Subject<number>();
+  private returnToCheckpointSubject = new Subject<void>();
+  private fpsSubject = new Subject<number>();
 
   nextGeneration$ = this.nextGenerationSubject.asObservable();
   lastGeneration$ = this.lastGenerationSubject.asObservable();
   reset$ = this.resetSubject.asObservable();
   gridSize$ = this.gridSizeSubject.asObservable();
   toroidalGrid$ = this.toroidalGridSubject.asObservable();
+  saveCheckpoint$ = this.saveCheckpointSubject.asObservable();
+  checkpointGeneration$ = this.checkpointGenerationSubject.asObservable();
+  returnToCheckpoint$ = this.returnToCheckpointSubject.asObservable();
+  fps$ = this.fpsSubject.asObservable();
 
   constructor() {}
 
@@ -60,5 +68,21 @@ export class GameService {
 
   updateToroidalGrid(value: boolean): void {
     this.toroidalGridSubject.next(value);
+  }
+
+  saveCheckpoint(): void {
+    this.saveCheckpointSubject.next();
+  }
+
+  setCheckpointGeneration(generation: number): void {
+    this.checkpointGenerationSubject.next(generation);
+  }
+
+  returnToCheckpoint(): void {
+    this.returnToCheckpointSubject.next();
+  }
+
+  updateFps(fps: number): void {
+    this.fpsSubject.next(fps);
   }
 }

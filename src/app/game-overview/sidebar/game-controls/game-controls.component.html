@@ -1,11 +1,6 @@
 <div class="controls">
   <!-- Generation Controls -->
   <div class="control-group">
-    <button (click)="onResetGridClick()" title="Reset">
-      <div class="icon-container">
-        <mat-icon>settings_backup_restore</mat-icon>
-      </div>
-    </button>
     <button (click)="onLastGenerationCLick()" title="Step Back">
       <div class="icon-container">
         <mat-icon>keyboard_arrow_left</mat-icon>
@@ -26,11 +21,29 @@
         <mat-icon>keyboard_double_arrow_right</mat-icon>
       </div>
     </button>
+    <button (click)="onResetGridClick()" title="Reset">
+      <div class="icon-container">
+        <mat-icon>settings_backup_restore</mat-icon>
+      </div>
+    </button>
+    <button (click)="onSaveCheckpointClick()" title="Save Checkpoint"
+            [class.highlighted]="checkpointGeneration !== 0">
+      <div class="icon-container">
+        <mat-icon>save</mat-icon>
+      </div>
+    </button>
+    <button (click)="onReturnToCheckpointClick()" title="Return to Checkpoint">
+      <div class="icon-container">
+        <mat-icon>outlined_flag</mat-icon>
+      </div>
+    </button>
+    <span class="badge">Checkpoint at Gen {{ checkpointGeneration }}</span>
   </div>
 
   <!-- Generation Speed Control -->
   <div class="control-group input-control-group">
-    <label for="setSpeed">Speed: {{ generationsPerSecond }} Generations/s</label>
+    <label for="setSpeed">Set Speed: {{ generationsPerSecond }} Generations/s</label>
+    <span class="badge">(Actual: {{ fps }} G/s)</span>
     <input id="setSpeed" type="range" [(ngModel)]="generationsPerSecond" [max]="maxGenerationsPerSecond" [min]="minGenerationsPerSecond" step="0.1" (change)="updateAutoGenerationInterval()"/>
   </div>
 

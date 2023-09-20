@@ -30,6 +30,11 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   private generationDeltas: Array<Map<string, boolean>> = [];
   public generationCount: number = 0;
 
+  private checkpoint: Set<string> = new Set();
+
+  private frameCount: number = 0;
+  private fps: number = 0;
+
   private panConfig = {
     isPanning: false,
     lastPanX: 0,
@@ -50,6 +55,8 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
       this.gameService.reset$.subscribe(() => this.initGrid()),
       this.gameService.gridSize$.subscribe((size: number) => this.userGridSize = size),
       this.gameService.toroidalGrid$.subscribe((isToroidal: boolean) => this.isToroidal = isToroidal),
+      this.gameService.saveCheckpoint$.subscribe(() => this.saveCheckpoint()),
+      this.gameService.returnToCheckpoint$.subscribe(() => this.returnToCheckpoint()),
       this.rleService.rleLoaded$.subscribe((cells: Cell[]) => this.onCellsLoaded(cells)),
   )};
 
@@ -58,6 +65,8 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     this.gameCtx = this.gameCanvas.nativeElement.getContext('2d')!;
 
     this.initGrid();
+
+    setInterval(() => this.updateFPSDisplay(), 1000);
   }
 
   initGrid(): void {
@@ -70,6 +79,11 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     this.gameCtx.clearRect(0, 0, this.gridSize, this.gridSize);
     this.initializeGridCells();
     this.panToMiddle();
+  }
+
+  updateFPSDisplay(): void {
+    this.gameService.updateFps(this.frameCount);
+    this.frameCount = 0;
   }
 
   private panToMiddle(): void {
@@ -271,7 +285,6 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cellsToCheck.add(cell.key);
     });
 
-    console.log(this.cellsToCheck.size)
     this.drawCells();
   }
 
@@ -303,6 +316,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     requestAnimationFrame(() => { this.drawCells(); });
 
     if (this.cellsToCheck.size > 0) { this.generationCount += 1; }
+    this.frameCount += 1;
   }
 
   private getNeighborKeys(cell: Cell): string[] {
@@ -363,6 +377,29 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
     requestAnimationFrame(() => { this.drawCells(); });
     this.generationCount -= 1;
+  }
+
+  private saveCheckpoint(): void {
+    this.checkpoint.clear();
+    this.cells.forEach((cell, key) => {
+      if (cell.alive) {
+        this.checkpoint.add(key);
+      }
+    });
+    this.gameService.setCheckpointGeneration(this.generationCount);
+  }
+
+  returnToCheckpoint(): void {
+    this.cells.forEach(cell => cell.alive = false);
+    this.checkpoint.forEach(key => {
+      const cell = this.cells.get(key);
+      if (cell) {
+        cell.alive = true;
+        this.cellsToCheck.add(key);
+      }
+    });
+
+  requestAnimationFrame(() => { this.drawCells(); });
   }
 
   ngOnDestroy(): void {
