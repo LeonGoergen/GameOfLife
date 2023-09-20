@@ -42,9 +42,17 @@
 
   <!-- Generation Speed Control -->
   <div class="control-group input-control-group">
-    <label for="setSpeed">Set Speed: {{ generationsPerSecond }} Generations/s</label>
-    <span class="badge">(Actual: {{ fps }} G/s)</span>
-    <input id="setSpeed" type="range" [(ngModel)]="generationsPerSecond" [max]="maxGenerationsPerSecond" [min]="minGenerationsPerSecond" step="0.1" (change)="updateAutoGenerationInterval()"/>
+    <label for="setSpeed">Speed: {{ generationsPerSecond }} Generations/s</label>
+    <input
+      id="setSpeed"
+      type="range"
+      [(ngModel)]="generationsPerSecond"
+      [max]="maxGenerationsPerSecond"
+      [min]="minGenerationsPerSecond"
+      step="0.1"
+      (change)="updateAutoGenerationInterval()"
+      [style]="getSliderStyle()"
+    />
   </div>
 
   <!-- Grid Size Control -->
@@ -55,7 +63,9 @@
 
   <!-- Toroidal Grid Control -->
   <div class="checkbox-control-group">
-    <mat-checkbox color="primary" [(ngModel)]="toroidalGrid" (change)="setToroidalGrid(toroidalGrid)"></mat-checkbox>
+    <mat-checkbox color="primary" [(ngModel)]="toroidalGrid" (change)="setToroidalGrid(toroidalGrid)" title="Toggle Grid Wrapping"></mat-checkbox>
     <label>Toroidal Grid</label>
+    <mat-checkbox color="primary" [(ngModel)]="gridLines" (change)="setGridLines(gridLines)" title="Toggle Grid Lines"></mat-checkbox>
+    <label>Gridlines</label>
   </div>
 </div>

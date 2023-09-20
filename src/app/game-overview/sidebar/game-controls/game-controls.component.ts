@@ -15,6 +15,7 @@ export class GameControlsComponent implements OnInit, OnDestroy {
 
   generationsPerSecond: number = 10.0;
   toroidalGrid: boolean = true;
+  gridLines: boolean = true;
   maxGenerationsPerSecond: number = CONTROLS_CONSTANTS.MAX_GEN_PER_SECOND;
   minGenerationsPerSecond: number = CONTROLS_CONSTANTS.MIN_GEN_PER_SECOND;
 
@@ -81,8 +82,23 @@ export class GameControlsComponent implements OnInit, OnDestroy {
     this.gameService.updateToroidalGrid(value);
   }
 
+  setGridLines(value: boolean): void {
+    this.gridLines = value;
+    this.gameService.updateGridLines(value);
+  }
+
   setFps(value: number): void {
-    this.fps = value;
+    this.fps = Math.round(value);
+  }
+
+  getFpsPercentage(): number {
+    return (this.fps / this.maxGenerationsPerSecond) * 100;
+  }
+
+  getSliderStyle() {
+    return {
+      '--fps-percentage': `${this.getFpsPercentage()}%`
+    };
   }
 
   ngOnDestroy(): void {

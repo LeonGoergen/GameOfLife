@@ -23,17 +23,16 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   private gridSize!: number;
   private userGridSize: number = GRID_CONSTANTS.INIT_GRID_SIZE;
   private isToroidal: boolean = true;
+  private gridLines: boolean = true;
 
   private cells: Map<string, Cell> = new Map();
   private cellsToCheck: Set<string> = new Set();
 
   private generationDeltas: Array<Map<string, boolean>> = [];
   public generationCount: number = 0;
-
   private checkpoint: Set<string> = new Set();
 
   private frameCount: number = 0;
-  private fps: number = 0;
 
   private panConfig = {
     isPanning: false,
@@ -55,6 +54,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
       this.gameService.reset$.subscribe(() => this.initGrid()),
       this.gameService.gridSize$.subscribe((size: number) => this.userGridSize = size),
       this.gameService.toroidalGrid$.subscribe((isToroidal: boolean) => this.isToroidal = isToroidal),
+      this.gameService.gridLines$.subscribe((gridLines: boolean) => this.toggleGridLines(gridLines)),
       this.gameService.saveCheckpoint$.subscribe(() => this.saveCheckpoint()),
       this.gameService.returnToCheckpoint$.subscribe(() => this.returnToCheckpoint()),
       this.rleService.rleLoaded$.subscribe((cells: Cell[]) => this.onCellsLoaded(cells)),
@@ -66,7 +66,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.initGrid();
 
-    setInterval(() => this.updateFPSDisplay(), 1000);
+    setInterval(() => this.updateFPSDisplay(), 100);
   }
 
   initGrid(): void {
@@ -82,7 +82,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateFPSDisplay(): void {
-    this.gameService.updateFps(this.frameCount);
+    this.gameService.updateFps(this.frameCount * 10);
     this.frameCount = 0;
   }
 
@@ -105,8 +105,18 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  toggleGridLines(gridLines: boolean): void {
+    this.gridLines = gridLines;
+    this.drawGridLines();
+  }
+
   drawGridLines(): void {
     this.gridCtx.clearRect(0, 0, this.gridSize, this.gridSize);
+
+    if (!this.gridLines) {
+      return;
+    }
+
     this.gridCtx.setTransform(...this.transformationMatrixService.matrix as any);
 
     this.gridCtx.strokeStyle = GRID_COLORS.GRID_LINE;

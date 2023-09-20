@@ -13,6 +13,7 @@ export class GameService {
   private resetSubject = new Subject<void>();
   private gridSizeSubject = new Subject<number>();
   private toroidalGridSubject = new Subject<boolean>();
+  private GridLinesSubject = new Subject<boolean>();
   private saveCheckpointSubject = new Subject<void>();
   private checkpointGenerationSubject = new Subject<number>();
   private returnToCheckpointSubject = new Subject<void>();
@@ -23,6 +24,7 @@ export class GameService {
   reset$ = this.resetSubject.asObservable();
   gridSize$ = this.gridSizeSubject.asObservable();
   toroidalGrid$ = this.toroidalGridSubject.asObservable();
+  gridLines$ = this.GridLinesSubject.asObservable();
   saveCheckpoint$ = this.saveCheckpointSubject.asObservable();
   checkpointGeneration$ = this.checkpointGenerationSubject.asObservable();
   returnToCheckpoint$ = this.returnToCheckpointSubject.asObservable();
@@ -68,6 +70,10 @@ export class GameService {
 
   updateToroidalGrid(value: boolean): void {
     this.toroidalGridSubject.next(value);
+  }
+
+  updateGridLines(value: boolean): void {
+    this.GridLinesSubject.next(value);
   }
 
   saveCheckpoint(): void {

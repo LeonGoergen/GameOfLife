@@ -76,7 +76,7 @@
   width: 100%;
   height: 8px;
   cursor: pointer;
-  background: #666;
+  background: linear-gradient(to right, rgba(63, 81, 181, 0.7) 0%, rgba(63, 81, 181, 0.7) var(--fps-percentage, 0%), #666 var(--fps-percentage, 0%), #666 100%);
   border-radius: 5px;
 }
 
@@ -84,7 +84,7 @@
   width: 100%;
   height: 8px;
   cursor: pointer;
-  background: #666;
+  background: linear-gradient(to right, rgba(63, 81, 181, 0.7) 0%, rgba(63, 81, 181, 0.7) var(--fps-percentage, 0%), #666 var(--fps-percentage, 0%), #666 100%);
   border-radius: 5px;
 }
 
