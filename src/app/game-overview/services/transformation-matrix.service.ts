@@ -12,7 +12,7 @@ export class TransformationMatrixService {
     private translateX: number= 0;
     private translateY: number= 0;
 
-  get matrix() {
+  public get matrix() {
     return [
       this.scaleX,
       this.skewY,
@@ -23,7 +23,7 @@ export class TransformationMatrixService {
     ];
   }
 
-  setTransform(scaleX: number, skewY: number, skewX: number, scaleY: number, translateX: number, translateY: number): void {
+  public setTransform(scaleX: number, skewY: number, skewX: number, scaleY: number, translateX: number, translateY: number): void {
     this.scaleX = scaleX;
     this.skewY = skewY;
     this.skewX = skewX;
@@ -32,22 +32,22 @@ export class TransformationMatrixService {
     this.translateY = translateY;
   }
 
-  get inverseMatrix() {
-    const det = this.scaleX * this.scaleY - this.skewX * this.skewY;
+  public get inverseMatrix() {
+    const det : number= this.scaleX * this.scaleY - this.skewX * this.skewY;
 
     if (det === 0) {
       throw new Error('Non-invertible matrix');
     }
 
-    const invDet = 1 / det;
+    const invDet: number = 1 / det;
 
-    const invScaleX = this.scaleY * invDet;
-    const invSkewY = -this.skewY * invDet;
-    const invSkewX = -this.skewX * invDet;
-    const invScaleY = this.scaleX * invDet;
+    const invScaleX: number = this.scaleY * invDet;
+    const invSkewY: number = -this.skewY * invDet;
+    const invSkewX: number = -this.skewX * invDet;
+    const invScaleY: number = this.scaleX * invDet;
 
-    const invTranslateX = -(invScaleX * this.translateX + invSkewY * this.translateY);
-    const invTranslateY = -(invSkewX * this.translateX + invScaleY * this.translateY);
+    const invTranslateX: number = -(invScaleX * this.translateX + invSkewY * this.translateY);
+    const invTranslateY: number = -(invSkewX * this.translateX + invScaleY * this.translateY);
 
     return [
       invScaleX,
@@ -60,18 +60,18 @@ export class TransformationMatrixService {
   }
 
   private calculateBounds(maxGridSize: number): { maxTranslateX: number, minTranslateX: number, maxTranslateY: number, minTranslateY: number } {
-    const maxTranslateX = 0;
-    const minTranslateX = GRID_CONSTANTS.CANVAS_WIDTH - (maxGridSize * this.scaleX);
+    const maxTranslateX: number = 0;
+    const minTranslateX: number = GRID_CONSTANTS.CANVAS_WIDTH - (maxGridSize * this.scaleX);
 
-    const maxTranslateY = 0;
-    const minTranslateY = GRID_CONSTANTS.CANVAS_HEIGHT - (maxGridSize * this.scaleY);
+    const maxTranslateY: number = 0;
+    const minTranslateY: number = GRID_CONSTANTS.CANVAS_HEIGHT - (maxGridSize * this.scaleY);
 
     return { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY };
   }
 
-  translate(deltaX: number, deltaY: number, maxGridSize: number): void {
-    const newTranslateX = this.translateX + deltaX;
-    const newTranslateY = this.translateY + deltaY;
+  public translate(deltaX: number, deltaY: number, maxGridSize: number): void {
+    const newTranslateX: number = this.translateX + deltaX;
+    const newTranslateY: number = this.translateY + deltaY;
 
     const { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY } = this.calculateBounds(maxGridSize);
 
@@ -79,11 +79,11 @@ export class TransformationMatrixService {
     this.translateY = Math.min(maxTranslateY, Math.max(minTranslateY, newTranslateY));
   }
 
-  scaleAt(point: { x: number; y: number }, amount: number, maxGridSize: number): void {
-    const newScale = this.scaleX * amount;
+  public scaleAt(point: { x: number; y: number }, amount: number, maxGridSize: number): void {
+    const newScale: number = this.scaleX * amount;
 
-    const potentialMinTranslateX = GRID_CONSTANTS.CANVAS_WIDTH - (maxGridSize * newScale);
-    const potentialMinTranslateY = GRID_CONSTANTS.CANVAS_HEIGHT - (maxGridSize * newScale);
+    const potentialMinTranslateX: number = GRID_CONSTANTS.CANVAS_WIDTH - (maxGridSize * newScale);
+    const potentialMinTranslateY: number = GRID_CONSTANTS.CANVAS_HEIGHT - (maxGridSize * newScale);
 
     if (potentialMinTranslateX > 0 || potentialMinTranslateY > 0) { return; }
     if (newScale < GRID_CONSTANTS.MIN_ZOOM_LEVEL || newScale > GRID_CONSTANTS.MAX_ZOOM_LEVEL) { return; }
@@ -99,11 +99,11 @@ export class TransformationMatrixService {
     this.translateY = Math.min(maxTranslateY, Math.max(minTranslateY, this.translateY));
   }
 
-  transformPoint(point: { x: number; y: number }, matrix: number[]): { x: number; y: number } {
+  public transformPoint(point: { x: number; y: number }, matrix: number[]): { x: number; y: number } {
     const [a, b, c, d, e, f] = matrix;
 
-    const x = a * point.x + c * point.y + e;
-    const y = b * point.x + d * point.y + f;
+    const x: number = a * point.x + c * point.y + e;
+    const y: number = b * point.x + d * point.y + f;
 
     return { x, y };
   }

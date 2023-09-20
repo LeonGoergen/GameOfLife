@@ -13,7 +13,7 @@ export class RleService {
   private cells!: Cell[];
   private isIgnoring!: boolean;
 
-  public rleLoaded$ = new Subject<Cell[]>();
+  public rleLoaded$: Subject<Cell[]> = new Subject<Cell[]>();
 
   public decodeRLE(rleString: string, startX: number, startY: number): void {
     if (/[^bo$0-9!#x]/.test(rleString)) {
@@ -23,11 +23,9 @@ export class RleService {
 
     this.initVariables();
 
-    for (let i = 0; i < rleString.length; i++) {
+    for (let i: number = 0; i < rleString.length; i++) {
       if (this.isIgnoring) {
-        if (rleString[i] === "\n") {
-          this.isIgnoring = false;
-        }
+        if (rleString[i] === "\n") { this.isIgnoring = false; }
         continue;
       }
 
@@ -54,12 +52,12 @@ export class RleService {
     this.rleLoaded$.next(this.cells);
   }
 
-  private resetStep = () => {
+  private resetStep = (): void => {
     this.step = 1;
   };
 
-  private updateCoordinatesForO(startX: number, startY: number) {
-    for (let j = 0; j < this.step; j++) {
+  private updateCoordinatesForO(startX: number, startY: number): void {
+    for (let j: number = 0; j < this.step; j++) {
       this.cells.push(
         new Cell(
           startX + this.x * GRID_CONSTANTS.CELL_SIZE,
@@ -72,20 +70,20 @@ export class RleService {
     this.resetStep();
   };
 
-  private updateCoordinatesForB() {
+  private updateCoordinatesForB(): void {
     this.x += this.step;
     this.resetStep();
   };
 
-  private updateCoordinatesForDollar() {
+  private updateCoordinatesForDollar(): void {
     this.x = 0;
     this.y += this.step;
     this.resetStep();
   };
 
-  private updateStep(i: number, rleString: string) {
-    const regex = /^\d+/;
-    const match = regex.exec(rleString.slice(i));
+  private updateStep(i: number, rleString: string): number {
+    const regex: RegExp = /^\d+/;
+    const match: RegExpExecArray | null = regex.exec(rleString.slice(i));
     if (match) {
       this.step = parseInt(match[0]);
       i += match[0].length - 1;
@@ -93,12 +91,11 @@ export class RleService {
     return i;
   };
 
-  private initVariables() {
+  private initVariables(): void {
     this.x = 0;
     this.y = 0;
     this.step = 1;
     this.cells = [];
     this.isIgnoring = false;
   }
-
 }

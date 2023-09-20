@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Subject} from "rxjs";
+import {Observable, Subject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -9,31 +9,31 @@ export class GameService {
   private generationInterval: number = 1000;
   private checkpointGenerationCount: number = 0;
 
-  private nextGenerationSubject = new Subject<void>();
-  private lastGenerationSubject = new Subject<void>();
-  private resetSubject = new Subject<void>();
-  private gridSizeSubject = new Subject<number>();
-  private toroidalGridSubject = new Subject<boolean>();
-  private GridLinesSubject = new Subject<boolean>();
-  private saveCheckpointSubject = new Subject<void>();
-  private checkpointGenerationSubject = new Subject<number>();
-  private returnToCheckpointSubject = new Subject<void>();
-  private fpsSubject = new Subject<number>();
+  private nextGenerationSubject: Subject<void> = new Subject<void>();
+  private lastGenerationSubject: Subject<void> = new Subject<void>();
+  private resetSubject: Subject<void> = new Subject<void>();
+  private gridSizeSubject: Subject<number> = new Subject<number>();
+  private toroidalGridSubject: Subject<boolean> = new Subject<boolean>();
+  private GridLinesSubject: Subject<boolean> = new Subject<boolean>();
+  private saveCheckpointSubject: Subject<void> = new Subject<void>();
+  private checkpointGenerationSubject: Subject<number> = new Subject<number>();
+  private returnToCheckpointSubject: Subject<void> = new Subject<void>();
+  private fpsSubject: Subject<number> = new Subject<number>();
 
-  nextGeneration$ = this.nextGenerationSubject.asObservable();
-  lastGeneration$ = this.lastGenerationSubject.asObservable();
-  reset$ = this.resetSubject.asObservable();
-  gridSize$ = this.gridSizeSubject.asObservable();
-  toroidalGrid$ = this.toroidalGridSubject.asObservable();
-  gridLines$ = this.GridLinesSubject.asObservable();
-  saveCheckpoint$ = this.saveCheckpointSubject.asObservable();
-  checkpointGeneration$ = this.checkpointGenerationSubject.asObservable();
-  returnToCheckpoint$ = this.returnToCheckpointSubject.asObservable();
-  fps$ = this.fpsSubject.asObservable();
+  public nextGeneration$: Observable<void> = this.nextGenerationSubject.asObservable();
+  public lastGeneration$: Observable<void> = this.lastGenerationSubject.asObservable();
+  public reset$: Observable<void> = this.resetSubject.asObservable();
+  public gridSize$: Observable<number> = this.gridSizeSubject.asObservable();
+  public toroidalGrid$: Observable<boolean> = this.toroidalGridSubject.asObservable();
+  public gridLines$: Observable<boolean> = this.GridLinesSubject.asObservable();
+  public saveCheckpoint$: Observable<void> = this.saveCheckpointSubject.asObservable();
+  public checkpointGeneration$: Observable<number> = this.checkpointGenerationSubject.asObservable();
+  public returnToCheckpoint$: Observable<void> = this.returnToCheckpointSubject.asObservable();
+  public fps$: Observable<number> = this.fpsSubject.asObservable();
 
   constructor() {}
 
-  startAutoGeneration(interval: number): void {
+  public startAutoGeneration(interval: number): void {
     this.stopAutoGeneration();
     this.generationInterval = interval;
     this.gameInterval = setInterval(() => {
@@ -41,60 +41,60 @@ export class GameService {
     }, this.generationInterval);
   }
 
-  updateGenerationInterval(interval: number): void {
+  public updateGenerationInterval(interval: number): void {
     this.generationInterval = interval;
     if (this.gameInterval) { this.startAutoGeneration(interval); }
   }
 
-  stopAutoGeneration(): void {
+  public stopAutoGeneration(): void {
     if (this.gameInterval) {
       clearInterval(this.gameInterval);
       this.gameInterval = null;
     }
   }
 
-  nextGeneration(): void {
+  public nextGeneration(): void {
     this.nextGenerationSubject.next();
   }
 
-  undoLastGeneration(): void {
+  public undoLastGeneration(): void {
     this.lastGenerationSubject.next();
   }
 
-  resetGrid(): void {
+  public resetGrid(): void {
     this.resetSubject.next();
   }
 
-  updateGridSize(size: number): void {
+  public updateGridSize(size: number): void {
     this.gridSizeSubject.next(size);
   }
 
-  updateToroidalGrid(value: boolean): void {
+  public updateToroidalGrid(value: boolean): void {
     this.toroidalGridSubject.next(value);
   }
 
-  updateGridLines(value: boolean): void {
+  public updateGridLines(value: boolean): void {
     this.GridLinesSubject.next(value);
   }
 
-  saveCheckpoint(): void {
+  public saveCheckpoint(): void {
     this.saveCheckpointSubject.next();
   }
 
-  setCheckpointGeneration(generation: number): void {
+  public setCheckpointGeneration(generation: number): void {
     this.checkpointGenerationCount = generation;
     this.checkpointGenerationSubject.next(generation);
   }
 
-  getCheckpointGeneration(): number {
+  public getCheckpointGeneration(): number {
     return this.checkpointGenerationCount;
   }
 
-  returnToCheckpoint(): void {
+  public returnToCheckpoint(): void {
     this.returnToCheckpointSubject.next();
   }
 
-  updateFps(fps: number): void {
+  public updateFps(fps: number): void {
     this.fpsSubject.next(fps);
   }
 }

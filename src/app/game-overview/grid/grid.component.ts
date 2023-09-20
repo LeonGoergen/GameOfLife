@@ -399,7 +399,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     this.gameService.setCheckpointGeneration(this.generationCount);
   }
 
-  returnToCheckpoint(): void {
+  private returnToCheckpoint(): void {
     this.cells.forEach(cell => cell.alive = false);
     this.checkpoint.forEach(key => {
       const cell: Cell | undefined = this.cells.get(key);
