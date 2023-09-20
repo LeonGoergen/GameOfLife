@@ -70,11 +70,19 @@
     <input title="*Changes apply on grid reset*" id="maxGridSize" type="range" [(ngModel)]="userMaxGridSize" [max]="maxGridSize" [min]="minGridSize" (change)="setUserMaxGridSize(userMaxGridSize)"/>
   </div>
 
-  <!-- Toroidal Grid Control -->
   <div class="checkbox-control-group">
-    <mat-checkbox color="primary" [(ngModel)]="toroidalGrid" (change)="setToroidalGrid(toroidalGrid)" title="Toggle Grid Wrapping"></mat-checkbox>
+    <!-- Toroidal Grid custom checkbox -->
+    <label class="custom-checkbox">
+      <input type="checkbox" [(ngModel)]="toroidalGrid" (change)="setToroidalGrid(toroidalGrid)" title="Toggle Grid Wrapping" />
+      <span class="checkmark"></span>
+    </label>
     <label>Toroidal Grid</label>
-    <mat-checkbox color="primary" [(ngModel)]="gridLines" (change)="setGridLines(gridLines)" title="Toggle Grid Lines"></mat-checkbox>
+
+    <!-- Gridlines custom checkbox -->
+    <label class="custom-checkbox">
+      <input type="checkbox" [(ngModel)]="gridLines" (change)="setGridLines(gridLines)" title="Toggle Grid Lines" />
+      <span class="checkmark"></span>
+    </label>
     <label>Gridlines</label>
   </div>
 </div>

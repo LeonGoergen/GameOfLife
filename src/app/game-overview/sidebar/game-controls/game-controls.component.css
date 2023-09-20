@@ -105,27 +105,72 @@
 }
 
 .checkbox-control-group {
-  margin-right: 5%;
-  margin-bottom: 5px;
   display: flex;
   align-items: center;
   gap: 10px;
-  color: white;
+  margin-right: 5%;
+  margin-top: 10px;
 }
 
-.checkbox-control-group mat-checkbox {
-  margin: 0;
-}
-
-.checkbox-control-group label {
-  margin: 0;
-  font-size: 16px;
+.custom-checkbox {
+  position: relative;
+  padding-left: 25px;
   cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+  margin-left: 15px;
+}
+
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.checkmark {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #ffffff22;
+  border-radius: 4px;
+  transform: translateY(-55%);
+}
+
+.custom-checkbox:hover input ~ .checkmark {
+  background-color: #aaa;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: var(--primary-color);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.custom-checkbox .checkmark:after {
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
 }
 
 .divider {
   height: 2px;
-  background-color: rgba(255, 255, 255, 0.25);
+  background-image: linear-gradient(to right, var(--primary-color), var(--divider-color));
   width: 100%;
   margin: 10px 15px 10px 0;
 }

@@ -4,7 +4,7 @@
   left: 0;
   width: 16vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.9);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -64,11 +64,6 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-.sidebar mat-divider {
-  margin-top: 10px;
-  width: 100%;
-}
-
 .sidebar app-edit-tools {
   flex-grow: 1;
   display: flex;
@@ -82,5 +77,12 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  margin-bottom: 30px;
+  margin-bottom: 5vh;
+}
+
+.divider {
+  height: 2px;
+  background-image: linear-gradient(to right, var(--primary-color), var(--divider-color));
+  width: 95%;
+  margin: 10px 15px 10px 0;
 }
