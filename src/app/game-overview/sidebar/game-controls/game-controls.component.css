@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: 15px;
   color: var(--text-color);
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
 }
 
@@ -11,12 +11,12 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 4%;
 }
 
 .control-group button, .control-group mat-icon-button {
-  width: 3.4vw;
-  height: 3.4vw;
+  width: 20%;
+  aspect-ratio: 1 / 1;
   padding: 5px;
   font-size: 16px;
   border: none;
@@ -30,7 +30,8 @@
 }
 
 .return-to-checkpoint-button {
-  width: calc(6.8vw + 10px) !important;
+  width: calc(7.2vw + 10px) !important;
+  aspect-ratio: 2.2 / 1 !important;
   flex-direction: column;
 }
 
@@ -173,4 +174,10 @@
   background-image: linear-gradient(to right, var(--primary-color), var(--divider-color));
   width: 100%;
   margin: 10px 15px 10px 0;
+}
+
+.text-container {
+  width: 50px;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }

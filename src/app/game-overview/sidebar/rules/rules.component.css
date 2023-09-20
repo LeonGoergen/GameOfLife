@@ -32,7 +32,7 @@
   align-items: center;
   gap: 16px;
   margin: 16px 0;
-  background-color: #2f2f2f;
+  background-color: var(--background-color-darker);
   padding: 10px;
   border-radius: 5px;
 }
