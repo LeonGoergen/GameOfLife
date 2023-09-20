@@ -21,9 +21,11 @@
         <mat-icon>keyboard_double_arrow_right</mat-icon>
       </div>
     </button>
-    <button (click)="onResetGridClick()" title="Reset">
+
+    <div class="divider"></div>
+    <button (click)="onResetGridClick()" title="Reset Grid">
       <div class="icon-container">
-        <mat-icon>settings_backup_restore</mat-icon>
+        <mat-icon>repartition</mat-icon>
       </div>
     </button>
     <button (click)="onSaveCheckpointClick()" title="Save Checkpoint"
@@ -32,12 +34,19 @@
         <mat-icon>save</mat-icon>
       </div>
     </button>
-    <button (click)="onReturnToCheckpointClick()" title="Return to Checkpoint">
+    <button
+      (click)="onReturnToCheckpointClick()"
+      title="Return to Checkpoint"
+      class="control-group return-to-checkpoint-button"
+    >
       <div class="icon-container">
-        <mat-icon>outlined_flag</mat-icon>
+        <mat-icon>restore</mat-icon>
+      </div>
+      <div class="text-container">
+        Generation: {{ checkpointGeneration }}
       </div>
     </button>
-    <span class="badge">Checkpoint at Gen {{ checkpointGeneration }}</span>
+    <div class="divider"></div>
   </div>
 
   <!-- Generation Speed Control -->
