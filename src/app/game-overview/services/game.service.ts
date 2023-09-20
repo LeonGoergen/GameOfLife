@@ -7,6 +7,7 @@ import {Subject} from "rxjs";
 export class GameService {
   private gameInterval: any;
   private generationInterval: number = 1000;
+  private checkpointGenerationCount: number = 0;
 
   private nextGenerationSubject = new Subject<void>();
   private lastGenerationSubject = new Subject<void>();
@@ -81,7 +82,12 @@ export class GameService {
   }
 
   setCheckpointGeneration(generation: number): void {
+    this.checkpointGenerationCount = generation;
     this.checkpointGenerationSubject.next(generation);
+  }
+
+  getCheckpointGeneration(): number {
+    return this.checkpointGenerationCount;
   }
 
   returnToCheckpoint(): void {

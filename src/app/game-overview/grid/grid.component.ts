@@ -408,8 +408,8 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cellsToCheck.add(key);
       }
     });
-
-  requestAnimationFrame(() => { this.drawCells(); });
+    this.generationCount = this.gameService.getCheckpointGeneration();
+    requestAnimationFrame(() => { this.drawCells(); });
   }
 
   ngOnDestroy(): void {
