@@ -9,19 +9,19 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./game-controls.component.css']
 })
 export class GameControlsComponent implements OnInit, OnDestroy {
-  highlightedButton: 'play' | 'pause' | null = null;
-  checkpointGeneration: number = 0;
-  fps: number = 0;
+  protected highlightedButton: 'play' | 'pause' | null = null;
+  protected checkpointGeneration: number = 0;
+  private fps: number = 0;
 
-  generationsPerSecond: number = 10.0;
-  toroidalGrid: boolean = true;
-  gridLines: boolean = true;
-  maxGenerationsPerSecond: number = CONTROLS_CONSTANTS.MAX_GEN_PER_SECOND;
-  minGenerationsPerSecond: number = CONTROLS_CONSTANTS.MIN_GEN_PER_SECOND;
+  protected generationsPerSecond: number = 10.0;
+  protected toroidalGrid: boolean = true;
+  protected gridLines: boolean = true;
+  protected maxGenerationsPerSecond: number = CONTROLS_CONSTANTS.MAX_GEN_PER_SECOND;
+  protected minGenerationsPerSecond: number = CONTROLS_CONSTANTS.MIN_GEN_PER_SECOND;
 
-  userMaxGridSize: number = GRID_CONSTANTS.INIT_GRID_SIZE / GRID_CONSTANTS.CELL_SIZE;
-  maxGridSize: number = GRID_CONSTANTS.MAX_GRID_SIZE / GRID_CONSTANTS.CELL_SIZE;
-  minGridSize: number = GRID_CONSTANTS.MIN_GRID_SIZE / GRID_CONSTANTS.CELL_SIZE;
+  protected userMaxGridSize: number = GRID_CONSTANTS.INIT_GRID_SIZE / GRID_CONSTANTS.CELL_SIZE;
+  protected maxGridSize: number = GRID_CONSTANTS.MAX_GRID_SIZE / GRID_CONSTANTS.CELL_SIZE;
+  protected minGridSize: number = GRID_CONSTANTS.MIN_GRID_SIZE / GRID_CONSTANTS.CELL_SIZE;
 
   private subscriptions: Subscription[] = [];
 
@@ -34,71 +34,69 @@ export class GameControlsComponent implements OnInit, OnDestroy {
     );
   }
 
-  onNextGenerationClick(): void {
+  protected onNextGenerationClick(): void {
     this.gameService.nextGeneration();
   }
 
-  onLastGenerationCLick(): void {
+  protected onLastGenerationCLick(): void {
     this.gameService.undoLastGeneration();
   }
 
-  onStartAutoGenerationClick(): void {
+  protected onStartAutoGenerationClick(): void {
     this.highlightedButton = 'play';
     this.gameService.startAutoGeneration(1000 / this.generationsPerSecond);
   }
 
-  onStopAutoGenerationClick(): void {
+  protected onStopAutoGenerationClick(): void {
     this.highlightedButton = 'pause';
     this.gameService.stopAutoGeneration();
   }
 
-  onResetGridClick(): void {
+  protected onResetGridClick(): void {
     this.gameService.resetGrid();
   }
 
-  updateAutoGenerationInterval(): void {
+  protected updateAutoGenerationInterval(): void {
     this.gameService.updateGenerationInterval(1000 / this.generationsPerSecond);
   }
 
-  onSaveCheckpointClick(): void {
+  protected onSaveCheckpointClick(): void {
     this.gameService.saveCheckpoint();
   }
 
-  setCheckpointGeneration(generation: number): void {
+  protected setCheckpointGeneration(generation: number): void {
     this.checkpointGeneration = generation;
   }
 
-  onReturnToCheckpointClick(): void {
+  protected onReturnToCheckpointClick(): void {
     this.gameService.returnToCheckpoint();
   }
 
-  setUserMaxGridSize(value: number): void {
+  protected setUserMaxGridSize(value: number): void {
     this.userMaxGridSize = value;
     this.gameService.updateGridSize(value * GRID_CONSTANTS.CELL_SIZE);
   }
 
-  setToroidalGrid(value: boolean): void {
+  protected setToroidalGrid(value: boolean): void {
     this.toroidalGrid = value;
     this.gameService.updateToroidalGrid(value);
   }
 
-  setGridLines(value: boolean): void {
+  protected setGridLines(value: boolean): void {
     this.gridLines = value;
     this.gameService.updateGridLines(value);
   }
 
-  setFps(value: number): void {
+  protected setFps(value: number): void {
     this.fps = Math.round(value);
   }
 
-  getFpsPercentage(): number {
+  protected getFpsPercentage(): number {
     return (this.fps / this.maxGenerationsPerSecond) * 100;
   }
 
-  getSliderStyle() {
-    return {
-      '--fps-percentage': `${this.getFpsPercentage()}%`
-    };
+  protected getSliderStyle(): any {
+    return {'--fps-percentage': `${this.getFpsPercentage()}%`};
   }
 
   ngOnDestroy(): void {

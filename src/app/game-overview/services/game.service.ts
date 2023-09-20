@@ -31,8 +31,6 @@ export class GameService {
   public returnToCheckpoint$: Observable<void> = this.returnToCheckpointSubject.asObservable();
   public fps$: Observable<number> = this.fpsSubject.asObservable();
 
-  constructor() {}
-
   public startAutoGeneration(interval: number): void {
     this.stopAutoGeneration();
     this.generationInterval = interval;

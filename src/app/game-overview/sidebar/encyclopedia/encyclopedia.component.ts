@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import { categories } from '../../../../assets/patterns';
-import {RleService} from "../../services/rle.service";
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -14,11 +13,10 @@ export class EncyclopediaComponent {
   constructor(private dialogRef: MatDialogRef<EncyclopediaComponent>) { }
 
   copyToClipboard(rle: string): void {
-    navigator.clipboard.writeText(rle).then(() => {
+    navigator.clipboard.writeText(rle).then((): void => {
       this.dialogRef.close();
     }).catch(err => {
       console.error('Could not copy text: ', err);
     });
-
   }
 }

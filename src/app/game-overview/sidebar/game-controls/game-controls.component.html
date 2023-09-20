@@ -1,5 +1,4 @@
 <div class="controls">
-  <!-- Generation Controls -->
   <div class="control-group">
     <button (click)="onLastGenerationCLick()" title="Step Back">
       <div class="icon-container">
@@ -49,7 +48,7 @@
     <div class="divider"></div>
   </div>
 
-  <!-- Generation Speed Control -->
+
   <div class="control-group input-control-group">
     <label for="setSpeed">Speed: {{ generationsPerSecond }} Generations/s</label>
     <input
@@ -64,21 +63,18 @@
     />
   </div>
 
-  <!-- Grid Size Control -->
   <div class="control-group input-control-group">
     <label for="maxGridSize">Grid Size: {{ userMaxGridSize }}<sup>2</sup> Cells</label>
     <input title="*Changes apply on grid reset*" id="maxGridSize" type="range" [(ngModel)]="userMaxGridSize" [max]="maxGridSize" [min]="minGridSize" (change)="setUserMaxGridSize(userMaxGridSize)"/>
   </div>
 
   <div class="checkbox-control-group">
-    <!-- Toroidal Grid custom checkbox -->
     <label class="custom-checkbox">
       <input type="checkbox" [(ngModel)]="toroidalGrid" (change)="setToroidalGrid(toroidalGrid)" title="Toggle Grid Wrapping" />
       <span class="checkmark"></span>
     </label>
     <label>Toroidal Grid</label>
 
-    <!-- Gridlines custom checkbox -->
     <label class="custom-checkbox">
       <input type="checkbox" [(ngModel)]="gridLines" (change)="setGridLines(gridLines)" title="Toggle Grid Lines" />
       <span class="checkmark"></span>

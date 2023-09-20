@@ -6,24 +6,24 @@
   overflow-y: scroll;
   overflow-x: hidden;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #3b3b3b;
+  background-color: var(--background-color-dark);
 }
 
 .heading {
   margin-bottom: 16px;
-  color: #ffffff;
+  color: var(--text-color);
 }
 
 .paragraph {
   margin-bottom: 16px;
-  color: #ffffff;
+  color: var(--text-color);
   line-height: 1.6;
 }
 
 .divider {
   border: 0;
   height: 1px;
-  background-image: linear-gradient(to right, #ffffff, #838383, #ffffff);
+  background-image: linear-gradient(to right, var(--text-color), var(--divider-color), var(--text-color));
   margin: 16px 0;
 }
 
@@ -40,7 +40,7 @@
 .rule h3 {
   flex: 1;
   margin: 0;
-  color: #ffffff;
+  color: var(--text-color);
 }
 
 .rule-image-left, .rule-image-right {

@@ -14,8 +14,8 @@
 }
 
 .control-group button, .control-group mat-icon-button {
-  width: 3.4vw;  /* Set the width as per your requirement */
-  height: 3.4vw; /* Make height equal to width to keep the buttons square */
+  width: 3.4vw;
+  height: 3.4vw;
   padding: 5px;
   font-size: 16px;
   border: none;

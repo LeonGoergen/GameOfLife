@@ -9,19 +9,19 @@ import {EncyclopediaComponent} from "./encyclopedia/encyclopedia.component";
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent {
-  isSidebarMinimized = false;
+  protected isSidebarMinimized = false;
 
   constructor(public dialog: MatDialog) {}
 
-  toggleSidebar() {
+  protected toggleSidebar(): void {
     this.isSidebarMinimized = !this.isSidebarMinimized;
   }
 
-  openRulesDialog(): void {
+  protected openRulesDialog(): void {
     this.dialog.open(RulesComponent);
   }
 
-  openEncyclopediaDialog(): void {
+  protected openEncyclopediaDialog(): void {
     this.dialog.open(EncyclopediaComponent);
   }
 }
