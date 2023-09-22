@@ -26,6 +26,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   private gridLines: boolean = true;
 
   private cells: Map<string, Cell> = new Map();
+  private visibleGridRange!: {startCol: number, endCol: number, startRow: number, endRow: number};
   private cellsToCheck: Set<string> = new Set();
 
   private generationDeltas: Array<Map<string, boolean>> = [];
@@ -79,6 +80,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     this.gameCtx.clearRect(0, 0, this.gridSize, this.gridSize);
     this.initializeGridCells();
     this.panToMiddle();
+    this.getVisibleGridRange();
   }
 
   private updateFPSDisplay(): void {
@@ -173,8 +175,6 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private drawCells(): void {
-    const visibleGridRange = this.getVisibleGridRange();
-
     this.gameCtx.clearRect(0, 0, this.gridSize, this.gridSize);
     this.gameCtx.setTransform(...this.transformationMatrixService.matrix as any);
 
@@ -183,14 +183,14 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.gameCtx.fillStyle = GRID_COLORS.ALIVE;
 
-    const cellsToCheck: Cell[] = this.getCellsToCheck(visibleGridRange);
+    const cellsToCheck: Cell[] = this.getCellsToCheck();
     cellsToCheck.forEach(cell => {
       if (cell.alive)
         this.gameCtx.fillRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE);
     });
   }
 
-  private getVisibleGridRange(): {startCol: number, endCol: number, startRow: number, endRow: number}  {
+  private getVisibleGridRange(): void  {
     const rect: DOMRect = this.gameCanvas.nativeElement.getBoundingClientRect();
 
     const inverseMatrix: number[] = this.transformationMatrixService.inverseMatrix;
@@ -202,14 +202,14 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     const startRow: number = Math.floor(topLeft.y / GRID_CONSTANTS.CELL_SIZE);
     const endRow: number = Math.ceil(bottomRight.y / GRID_CONSTANTS.CELL_SIZE);
 
-    return {startCol, endCol, startRow, endRow};
+    this.visibleGridRange = {startCol, endCol, startRow, endRow};
   }
 
-  private getCellsToCheck(visibleGridRange: any): Cell[] {
+  private getCellsToCheck(): Cell[] { //TODO: Performance improvement
     const keys: string[] = [];
 
-    for (let x = visibleGridRange.startCol; x <= visibleGridRange.endCol; x++) {
-      for (let y = visibleGridRange.startRow; y <= visibleGridRange.endRow; y++) {
+    for (let x: number = this.visibleGridRange.startCol; x <= this.visibleGridRange.endCol; x++) {
+      for (let y: number = this.visibleGridRange.startRow; y <= this.visibleGridRange.endRow; y++) {
         keys.push(`${x * GRID_CONSTANTS.CELL_SIZE},${y * GRID_CONSTANTS.CELL_SIZE}`);
       }
     }
@@ -240,6 +240,8 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.panConfig.totalPanDistance += Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
+    this.getVisibleGridRange();
+
     requestAnimationFrame(() => {
       this.drawGridLines();
       this.drawCells();
@@ -260,6 +262,8 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const amount: number = 1 - event.deltaY * GRID_CONSTANTS.ZOOM_FACTOR;
     this.transformationMatrixService.scaleAt({ x, y }, amount, this.gridSize);
+
+    this.getVisibleGridRange();
 
     requestAnimationFrame(() => {
       this.drawGridLines();
@@ -311,7 +315,10 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     return `${cellX},${cellY}`;
   }
 
+  private startTime: any;
+
   private onNextGeneration(): void {
+    if (!this.startTime) { this.startTime = performance.now(); }
     const newCellsToCheck: Set<string> = new Set<string>();
     const aliveCells: Map<string, boolean> = new Map<string, boolean>();
 
@@ -326,6 +333,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     requestAnimationFrame((): void => { this.drawCells(); });
 
     if (this.cellsToCheck.size > 0) { this.generationCount += 1; }
+    if (this.generationCount === 1000) { console.log(performance.now() - this.startTime); }
     this.frameCount += 1;
   }
 
