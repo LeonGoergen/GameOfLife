@@ -8,8 +8,9 @@ export class GameService {
   private gameInterval: any;
   private generationInterval: number = 1000;
   private checkpointGenerationCount: number = 0;
+  private fps: number = 0;
 
-  private nextGenerationSubject: Subject<void> = new Subject<void>();
+  private nextGenerationSubject: Subject<boolean> = new Subject<boolean>();
   private lastGenerationSubject: Subject<void> = new Subject<void>();
   private resetSubject: Subject<void> = new Subject<void>();
   private gridSizeSubject: Subject<number> = new Subject<number>();
@@ -20,7 +21,7 @@ export class GameService {
   private returnToCheckpointSubject: Subject<void> = new Subject<void>();
   private fpsSubject: Subject<number> = new Subject<number>();
 
-  public nextGeneration$: Observable<void> = this.nextGenerationSubject.asObservable();
+  public nextGeneration$: Observable<boolean> = this.nextGenerationSubject.asObservable();
   public lastGeneration$: Observable<void> = this.lastGenerationSubject.asObservable();
   public reset$: Observable<void> = this.resetSubject.asObservable();
   public gridSize$: Observable<number> = this.gridSizeSubject.asObservable();
@@ -34,8 +35,17 @@ export class GameService {
   public startAutoGeneration(interval: number): void {
     this.stopAutoGeneration();
     this.generationInterval = interval;
+
+    let generationCounter = 0;
+    const skipRate = Math.ceil((1000 / interval) / 60);
+
     this.gameInterval = setInterval(() => {
-      this.nextGeneration();
+      generationCounter++;
+      if (generationCounter % skipRate === 0) {
+        this.nextGeneration(true);
+      } else {
+        this.nextGeneration(false);
+      }
     }, this.generationInterval);
   }
 
@@ -51,8 +61,8 @@ export class GameService {
     }
   }
 
-  public nextGeneration(): void {
-    this.nextGenerationSubject.next();
+  public nextGeneration(drawing: boolean): void {
+    this.nextGenerationSubject.next(drawing);
   }
 
   public undoLastGeneration(): void {
@@ -93,6 +103,7 @@ export class GameService {
   }
 
   public updateFps(fps: number): void {
+    this.fps = fps;
     this.fpsSubject.next(fps);
   }
 }

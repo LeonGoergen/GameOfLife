@@ -50,7 +50,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions.push(
-      this.gameService.nextGeneration$.subscribe(() => this.onNextGeneration()),
+      this.gameService.nextGeneration$.subscribe((drawing: boolean) => this.onNextGeneration(drawing)),
       this.gameService.lastGeneration$.subscribe(() => this.onLastGeneration()),
       this.gameService.reset$.subscribe(() => this.initGrid()),
       this.gameService.gridSize$.subscribe((size: number) => this.userGridSize = size),
@@ -115,12 +115,9 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   private drawGridLines(): void {
     this.gridCtx.clearRect(0, 0, this.gridSize, this.gridSize);
 
-    if (!this.gridLines) {
-      return;
-    }
+    if (!this.gridLines) { return; }
 
     this.gridCtx.setTransform(...this.transformationMatrixService.matrix as any);
-
     this.gridCtx.strokeStyle = GRID_COLORS.GRID_LINE;
 
     const gridSpacing: number = this.getGridSpacing();
@@ -146,17 +143,8 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     const zoomLevel: number = this.transformationMatrixService.matrix[0];
     let gridSpacing: number = 1;
 
-    if (zoomLevel <= GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD && zoomLevel > GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 2) {
-      gridSpacing = 2;
-    } else if (zoomLevel <= GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 2 && zoomLevel > GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 4) {
-      gridSpacing = 4;
-    } else if (zoomLevel <= GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 4 && zoomLevel > GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 8) {
-      gridSpacing = 8;
-    } else if (zoomLevel <= GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 8 && zoomLevel > GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 16) {
-      gridSpacing = 16;
-    } else if (zoomLevel <= GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 16 && zoomLevel > GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / 32) {
-      gridSpacing = 32;
-    }
+    const division: number = GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / zoomLevel;
+    gridSpacing = Math.pow(2, Math.ceil(Math.log2(division)));
 
     return gridSpacing;
   }
@@ -317,7 +305,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private startTime: any;
 
-  private onNextGeneration(): void {
+  private onNextGeneration(drawing: boolean): void {
     if (!this.startTime) { this.startTime = performance.now(); }
     const newCellsToCheck: Set<string> = new Set<string>();
     const aliveCells: Map<string, boolean> = new Map<string, boolean>();
@@ -330,7 +318,9 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.generationDeltas.length > 500) { this.generationDeltas.shift(); }
 
     this.cellsToCheck = newCellsToCheck;
-    requestAnimationFrame((): void => { this.drawCells(); });
+
+    if (drawing)
+      requestAnimationFrame((): void => { this.drawCells(); });
 
     if (this.cellsToCheck.size > 0) { this.generationCount += 1; }
     if (this.generationCount === 1000) { console.log(performance.now() - this.startTime); }

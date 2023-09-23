@@ -35,7 +35,7 @@ export class GameControlsComponent implements OnInit, OnDestroy {
   }
 
   protected onNextGenerationClick(): void {
-    this.gameService.nextGeneration();
+    this.gameService.nextGeneration(true);
   }
 
   protected onLastGenerationCLick(): void {
