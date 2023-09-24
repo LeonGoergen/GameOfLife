@@ -23,7 +23,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   private gameCtx!: CanvasRenderingContext2D;
   private offscreenCtx!: CanvasRenderingContext2D;
 
-  private gridSize!: number;
+  protected gridSize: number = GRID_CONSTANTS.INIT_GRID_SIZE;
   private userGridSize: number = GRID_CONSTANTS.INIT_GRID_SIZE;
   private isToroidal: boolean = true;
   private gridLines: boolean = true;
@@ -37,13 +37,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   private checkpoint: Set<string> = new Set();
 
   private frameCount: number = 0;
-
-  private panConfig = {
-    isPanning: false,
-    lastPanX: 0,
-    lastPanY: 0,
-    totalPanDistance: 0,
-  };
+  protected totalPanDistance: number = 0;
 
   private subscriptions: Subscription[] = [];
 
@@ -221,74 +215,36 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
       .filter((cell): cell is Cell => cell !== undefined);
   }
 
-  protected startPan(event: MouseEvent): void {
-    this.panConfig.isPanning = true;
-    this.panConfig.lastPanX = event.clientX;
-    this.panConfig.lastPanY = event.clientY;
-    this.panConfig.totalPanDistance = 0;
-  }
-
-  protected pan(event: MouseEvent): void {
-    if (!this.panConfig.isPanning) { return; }
-
-    const deltaX: number = event.clientX - this.panConfig.lastPanX;
-    const deltaY: number = event.clientY - this.panConfig.lastPanY;
-
-    this.transformationMatrixService.translate(deltaX, deltaY, this.gridSize);
-
-    this.panConfig.lastPanX = event.clientX;
-    this.panConfig.lastPanY = event.clientY;
-
-    this.panConfig.totalPanDistance += Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
+  protected handlePan(totalPanDistance: number): void {
+    this.totalPanDistance = totalPanDistance;
     this.getVisibleGridRange();
-
     requestAnimationFrame(() => {
       this.drawGridLines();
       this.drawCells();
     });
   }
 
-  protected endPan(): void {
-    this.panConfig.isPanning = false;
-  }
-
-  protected zoom(event: WheelEvent): void {
-    event.preventDefault();
-
-    const rect: DOMRect = this.gridCanvas.nativeElement.getBoundingClientRect();
-
-    const x: number = event.clientX - rect.left;
-    const y: number = event.clientY - rect.top;
-
-    const amount: number = 1 - event.deltaY * GRID_CONSTANTS.ZOOM_FACTOR;
-    this.transformationMatrixService.scaleAt({ x, y }, amount, this.gridSize);
-
+  protected handleZoom(): void {
     this.getVisibleGridRange();
-
     requestAnimationFrame(() => {
       this.drawGridLines();
       this.drawCells();
     });
   }
 
-  protected onCanvasClick(event: MouseEvent): void {
-    if (this.panConfig.totalPanDistance > GRID_CONSTANTS.PAN_DISTANCE_THRESHOLD) { return; }
-
-    const key: string = this.getCellKeyByCoordinates(event);
+  protected handleCanvasClick(key: string): void {
     const cell: Cell | undefined = this.cells.get(key);
-
     if (!cell) { return; }
 
     cell.alive = !cell.alive;
     cell.alive ? this.cellsToCheck.add(key) : this.cellsToCheck.delete(key);
 
-    this.drawCells();
+    requestAnimationFrame(() => {
+      this.drawCells();
+    });
   }
 
-  protected async onRightClick(event: MouseEvent): Promise<void> {
-    event.preventDefault();
-    const key: string = this.getCellKeyByCoordinates(event);
+  protected async handleRightClick(key: string): Promise<void> {
     const cell: Cell = this.cells.get(key)!;
     const rleString: string = await navigator.clipboard.readText();
     this.rleService.decodeRLE(rleString, cell.x, cell.y);
@@ -300,20 +256,9 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cellsToCheck.add(cell.key);
     });
 
-    this.drawCells();
-  }
-
-  private getCellKeyByCoordinates(event: MouseEvent): string {
-    const rect: DOMRect = this.gameCanvas.nativeElement.getBoundingClientRect();
-    const x: number = event.clientX - rect.left;
-    const y: number = event.clientY - rect.top;
-
-    const inverseMatrix: number[] = this.transformationMatrixService.inverseMatrix;
-    const worldPoint: {x: number, y:number} = this.transformationMatrixService.transformPoint({ x, y }, inverseMatrix);
-
-    const cellX: number = Math.floor(worldPoint.x / GRID_CONSTANTS.CELL_SIZE) * GRID_CONSTANTS.CELL_SIZE;
-    const cellY: number = Math.floor(worldPoint.y / GRID_CONSTANTS.CELL_SIZE) * GRID_CONSTANTS.CELL_SIZE;
-    return `${cellX},${cellY}`;
+    requestAnimationFrame(() => {
+      this.drawCells();
+    });
   }
 
   private startTime: any;

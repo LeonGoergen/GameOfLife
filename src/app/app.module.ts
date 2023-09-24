@@ -16,6 +16,9 @@ import {NgOptimizedImage} from "@angular/common";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { EditToolsComponent } from './game-overview/sidebar/edit-tools/edit-tools.component';
 import { EncyclopediaComponent } from './game-overview/sidebar/encyclopedia/encyclopedia.component';
+import { CanvasPanDirective } from './game-overview/grid/directives/canvas-pan.directive';
+import { CanvasZoomDirective } from './game-overview/grid/directives/canvas-zoom.directive';
+import { CanvasClickDirective } from './game-overview/grid/directives/canvas-click.directive';
 
 @NgModule({
   declarations: [
@@ -26,7 +29,10 @@ import { EncyclopediaComponent } from './game-overview/sidebar/encyclopedia/ency
     SidebarComponent,
     RulesComponent,
     EditToolsComponent,
-    EncyclopediaComponent
+    EncyclopediaComponent,
+    CanvasPanDirective,
+    CanvasZoomDirective,
+    CanvasClickDirective
   ],
   imports: [
     BrowserModule,

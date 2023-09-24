@@ -1,11 +1,7 @@
 <div class="canvas-container"
-     (wheel)="zoom($event)"
-     (mousedown)="startPan($event)"
-     (mousemove)="pan($event)"
-     (mouseup)="endPan()"
-     (mouseout)="endPan()"
-     (click)="onCanvasClick($event)"
-     (contextmenu)="onRightClick($event)">
+     appCanvasPan [gridSize]="gridSize" (panUpdated)="handlePan($event)"
+     appCanvasZoom (zoomRequested)="handleZoom()"
+     appCanvasClick [totalPanDistance]="totalPanDistance" (canvasClicked)="handleCanvasClick($event)" (rightClicked)="handleRightClick($event)">
   <canvas #gameCanvas class="layer" [attr.width]="CANVAS_WIDTH" [attr.height]="CANVAS_HEIGHT"></canvas>
   <canvas #gridCanvas class="layer" [attr.width]="CANVAS_WIDTH" [attr.height]="CANVAS_HEIGHT"></canvas>
   <div class="generation-counter">Generation: {{generationCount}}</div>
