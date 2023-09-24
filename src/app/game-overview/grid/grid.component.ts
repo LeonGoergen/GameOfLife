@@ -14,11 +14,14 @@ import {RleService} from "../services/rle.service";
 export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   CANVAS_WIDTH: number = GRID_CONSTANTS.CANVAS_WIDTH;
   CANVAS_HEIGHT: number = GRID_CONSTANTS.CANVAS_HEIGHT;
+
   @ViewChild('gridCanvas', { static: true }) gridCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('gameCanvas', { static: true }) gameCanvas!: ElementRef<HTMLCanvasElement>;
+  private offscreenCanvas!: HTMLCanvasElement;
 
   private gridCtx!: CanvasRenderingContext2D;
   private gameCtx!: CanvasRenderingContext2D;
+  private offscreenCtx!: CanvasRenderingContext2D;
 
   private gridSize!: number;
   private userGridSize: number = GRID_CONSTANTS.INIT_GRID_SIZE;
@@ -64,6 +67,11 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.gridCtx = this.gridCanvas.nativeElement.getContext('2d')!;
     this.gameCtx = this.gameCanvas.nativeElement.getContext('2d')!;
+
+    this.offscreenCanvas = document.createElement('canvas');
+    this.offscreenCanvas.width = this.CANVAS_WIDTH;
+    this.offscreenCanvas.height = this.CANVAS_HEIGHT;
+    this.offscreenCtx = this.offscreenCanvas.getContext('2d')!;
 
     this.initGrid();
 
@@ -168,17 +176,19 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     const width: number = (this.visibleGridRange.endCol - this.visibleGridRange.startCol) * GRID_CONSTANTS.CELL_SIZE;
     const height: number = (this.visibleGridRange.endRow - this.visibleGridRange.startRow) * GRID_CONSTANTS.CELL_SIZE;
 
-    this.gameCtx.clearRect(startX, startY, width, height);
-    this.gameCtx.setTransform(...this.transformationMatrixService.matrix as any);
-    this.gameCtx.fillStyle = GRID_COLORS.DEAD;
-    this.gameCtx.fillRect(startX, startY, width, height);
-    this.gameCtx.fillStyle = GRID_COLORS.ALIVE;
+    this.offscreenCtx.clearRect(startX, startY, width, height);
+    this.offscreenCtx.setTransform(...this.transformationMatrixService.matrix as any);
+    this.offscreenCtx.fillStyle = GRID_COLORS.DEAD;
+    this.offscreenCtx.fillRect(startX, startY, width, height);
+    this.offscreenCtx.fillStyle = GRID_COLORS.ALIVE;
 
     const cellsToCheck: Cell[] = this.getCellsToCheck();
     cellsToCheck.forEach(cell => {
       if (cell.alive)
-        this.gameCtx.fillRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE);
+        this.offscreenCtx.fillRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE);
     });
+
+    this.gameCtx.drawImage(this.offscreenCanvas, 0, 0);
   }
 
   private getVisibleGridRange(): void  {
@@ -331,8 +341,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getNeighborKeys(cell: Cell): string[] {
-    const neighbors = this.isToroidal ? cell.getToroidalNeighbors(this.gridSize) : cell.neighbors;
-    return Object.values(neighbors).map(neighbor => `${neighbor.x},${neighbor.y}`);
+    return this.isToroidal ? cell.getToroidalNeighbors(this.gridSize) : cell.neighbors;
   }
 
   private getAllCellsToCheck(): Set<string> {

@@ -15,29 +15,26 @@ export class Cell {
     return `${this.x},${this.y}`;
   }
 
+  private static neighborOffsets: { dx: number, dy: number }[] = [
+    { dx: -GRID_CONSTANTS.CELL_SIZE, dy: -GRID_CONSTANTS.CELL_SIZE }, // tl
+    { dx: 0, dy: -GRID_CONSTANTS.CELL_SIZE },                         // t
+    { dx: GRID_CONSTANTS.CELL_SIZE, dy: -GRID_CONSTANTS.CELL_SIZE },  // tr
+    { dx: -GRID_CONSTANTS.CELL_SIZE, dy: 0 },                         // l
+    { dx: GRID_CONSTANTS.CELL_SIZE, dy: 0 },                          // r
+    { dx: -GRID_CONSTANTS.CELL_SIZE, dy: GRID_CONSTANTS.CELL_SIZE },  // bl
+    { dx: 0, dy: GRID_CONSTANTS.CELL_SIZE },                          // b
+    { dx: GRID_CONSTANTS.CELL_SIZE, dy: GRID_CONSTANTS.CELL_SIZE }    // br
+  ];
+
   get neighbors() {
-    return {
-      tl: { x: this.x - GRID_CONSTANTS.CELL_SIZE, y: this.y - GRID_CONSTANTS.CELL_SIZE },
-      t: { x: this.x, y: this.y - GRID_CONSTANTS.CELL_SIZE },
-      tr: { x: this.x + GRID_CONSTANTS.CELL_SIZE, y: this.y - GRID_CONSTANTS.CELL_SIZE },
-      l: { x: this.x - GRID_CONSTANTS.CELL_SIZE, y: this.y },
-      r: { x: this.x + GRID_CONSTANTS.CELL_SIZE, y: this.y },
-      bl: { x: this.x - GRID_CONSTANTS.CELL_SIZE, y: this.y + GRID_CONSTANTS.CELL_SIZE },
-      b: { x: this.x, y: this.y + GRID_CONSTANTS.CELL_SIZE },
-      br: { x: this.x + GRID_CONSTANTS.CELL_SIZE, y: this.y + GRID_CONSTANTS.CELL_SIZE },
-    };
+    return Cell.neighborOffsets.map(offset => `${this.x + offset.dx},${this.y + offset.dy}`);
   }
 
   getToroidalNeighbors(gridSize: number) {
-    return {
-      tl: { x: (this.x - GRID_CONSTANTS.CELL_SIZE + gridSize) % gridSize, y: (this.y - GRID_CONSTANTS.CELL_SIZE + gridSize) % gridSize },
-      t: { x: this.x, y: (this.y - GRID_CONSTANTS.CELL_SIZE + gridSize) % gridSize },
-      tr: { x: (this.x + GRID_CONSTANTS.CELL_SIZE) % gridSize, y: (this.y - GRID_CONSTANTS.CELL_SIZE + gridSize) % gridSize },
-      l: { x: (this.x - GRID_CONSTANTS.CELL_SIZE + gridSize) % gridSize, y: this.y },
-      r: { x: (this.x + GRID_CONSTANTS.CELL_SIZE) % gridSize, y: this.y },
-      bl: { x: (this.x - GRID_CONSTANTS.CELL_SIZE + gridSize) % gridSize, y: (this.y + GRID_CONSTANTS.CELL_SIZE) % gridSize },
-      b: { x: this.x, y: (this.y + GRID_CONSTANTS.CELL_SIZE) % gridSize },
-      br: { x: (this.x + GRID_CONSTANTS.CELL_SIZE) % gridSize, y: (this.y + GRID_CONSTANTS.CELL_SIZE) % gridSize },
-    };
+    return Cell.neighborOffsets.map(offset => {
+      const nx = (this.x + offset.dx + gridSize) % gridSize;
+      const ny = (this.y + offset.dy + gridSize) % gridSize;
+      return `${nx},${ny}`;
+    });
   }
 }
