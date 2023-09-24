@@ -149,7 +149,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private getGridSpacing(): number {
     const zoomLevel: number = this.transformationMatrixService.matrix[0];
-    let gridSpacing: number = 1;
+    let gridSpacing: number;
 
     const division: number = GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / zoomLevel;
     gridSpacing = Math.pow(2, Math.ceil(Math.log2(division)));
@@ -346,13 +346,14 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private getAllCellsToCheck(): Set<string> {
     const allCellsToCheck: Set<string> = new Set<string>();
+
     this.cellsToCheck.forEach(key => {
-      allCellsToCheck.add(key);
       const cell: Cell | undefined = this.cells.get(key);
-      if (cell) {
-        this.getNeighborKeys(cell).forEach(neighborKey => allCellsToCheck.add(neighborKey));
-      }
+      if (!cell) { return; }
+      allCellsToCheck.add(key);
+      this.getNeighborKeys(cell).forEach(neighborKey => allCellsToCheck.add(neighborKey));
     });
+
     return allCellsToCheck;
   }
 
