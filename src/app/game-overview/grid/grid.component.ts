@@ -163,12 +163,15 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private drawCells(): void {
-    this.gameCtx.clearRect(0, 0, this.gridSize, this.gridSize);
+    const startX: number = this.visibleGridRange.startCol * GRID_CONSTANTS.CELL_SIZE;
+    const startY: number = this.visibleGridRange.startRow * GRID_CONSTANTS.CELL_SIZE;
+    const width: number = (this.visibleGridRange.endCol - this.visibleGridRange.startCol) * GRID_CONSTANTS.CELL_SIZE;
+    const height: number = (this.visibleGridRange.endRow - this.visibleGridRange.startRow) * GRID_CONSTANTS.CELL_SIZE;
+
+    this.gameCtx.clearRect(startX, startY, width, height);
     this.gameCtx.setTransform(...this.transformationMatrixService.matrix as any);
-
     this.gameCtx.fillStyle = GRID_COLORS.DEAD;
-    this.gameCtx.fillRect(0, 0, this.gridSize, this.gridSize);
-
+    this.gameCtx.fillRect(startX, startY, width, height);
     this.gameCtx.fillStyle = GRID_COLORS.ALIVE;
 
     const cellsToCheck: Cell[] = this.getCellsToCheck();

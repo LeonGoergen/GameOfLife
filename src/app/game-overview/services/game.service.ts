@@ -8,6 +8,7 @@ export class GameService {
   private gameInterval: any;
   private generationInterval: number = 1000;
   private checkpointGenerationCount: number = 0;
+  private targetFPS: number = 30;
   private fps: number = 0;
 
   private nextGenerationSubject: Subject<boolean> = new Subject<boolean>();
@@ -37,9 +38,9 @@ export class GameService {
     this.generationInterval = interval;
 
     let generationCounter = 0;
-    const skipRate = Math.ceil((1000 / interval) / 60);
 
     this.gameInterval = setInterval(() => {
+      const skipRate = Math.ceil(this.fps / this.targetFPS);
       generationCounter++;
       if (generationCounter % skipRate === 0) {
         this.nextGeneration(true);
