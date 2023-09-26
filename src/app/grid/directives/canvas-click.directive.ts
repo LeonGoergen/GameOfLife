@@ -1,6 +1,8 @@
 import {Directive, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
 import {GRID_CONSTANTS} from "../../app.constants";
 import {TransformationMatrixService} from "../../services/transformation-matrix.service";
+import {MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
+import {ContextMenuComponent} from "../context-menu/context-menu.component";
 
 @Directive({
   selector: '[appCanvasClick]'
@@ -11,7 +13,8 @@ export class CanvasClickDirective {
   @Output() rightClicked: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(private el: ElementRef,
-              private transformationMatrixService: TransformationMatrixService) {}
+              private transformationMatrixService: TransformationMatrixService,
+              public dialog: MatDialog) {}
 
   @HostListener('click', ['$event'])
   handleCanvasClick(event: MouseEvent): void {
@@ -25,6 +28,7 @@ export class CanvasClickDirective {
   handleRightClick(event: MouseEvent): void {
     event.preventDefault();
     const key: string = this.getCellKeyByCoordinates(event);
+    this.dialog.open(ContextMenuComponent);
     this.rightClicked.emit(key);
   }
 

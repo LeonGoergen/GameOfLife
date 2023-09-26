@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {TransformationMatrixService} from "../services/transformation-matrix.service";
 import {Cell} from "./cell/cell";
-import {GameService} from "../services/game.service";
+import {ControlCommunicationService} from "../services/control-communication.service";
 import {Subscription} from "rxjs";
 import {RleService} from "../services/rle.service";
 import {DrawingContext} from "../models/drawing-context.model";
@@ -29,7 +29,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   constructor(private transformationMatrixService: TransformationMatrixService,
-              private gameService: GameService,
+              private gameService: ControlCommunicationService,
               private rleService: RleService,
               private drawingContextFactoryService: DrawingContextFactoryService,
               private gridPropertiesFactoryService: GridPropertiesFactoryService,

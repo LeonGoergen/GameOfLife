@@ -4,7 +4,7 @@ import {Observable, Subject} from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
-export class GameService {
+export class ControlCommunicationService {
   private gameInterval: any;
   private generationInterval: number = 1000;
   private checkpointGenerationCount: number = 0;

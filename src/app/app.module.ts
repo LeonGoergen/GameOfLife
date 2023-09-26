@@ -18,6 +18,7 @@ import { EncyclopediaComponent } from './sidebar/encyclopedia/encyclopedia.compo
 import { CanvasPanDirective } from './grid/directives/canvas-pan.directive';
 import { CanvasZoomDirective } from './grid/directives/canvas-zoom.directive';
 import { CanvasClickDirective } from './grid/directives/canvas-click.directive';
+import { ContextMenuComponent } from './grid/context-menu/context-menu.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { CanvasClickDirective } from './grid/directives/canvas-click.directive';
     EncyclopediaComponent,
     CanvasPanDirective,
     CanvasZoomDirective,
-    CanvasClickDirective
+    CanvasClickDirective,
+    ContextMenuComponent
   ],
   imports: [
     BrowserModule,

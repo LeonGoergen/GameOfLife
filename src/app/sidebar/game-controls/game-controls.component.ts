@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {GameService} from "../../services/game.service";
+import {ControlCommunicationService} from "../../services/control-communication.service";
 import {CONTROLS_CONSTANTS, GRID_CONSTANTS} from "../../app.constants";
 import { Subscription } from 'rxjs';
 
@@ -25,7 +25,7 @@ export class GameControlsComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
-  constructor(private gameService: GameService) {}
+  constructor(private gameService: ControlCommunicationService) {}
 
   ngOnInit(): void {
     this.subscriptions.push(
