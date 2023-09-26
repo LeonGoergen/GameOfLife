@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {GameService} from "../../services/game.service";
-import {CONTROLS_CONSTANTS, GRID_CONSTANTS} from "../../../app.constants";
+import {CONTROLS_CONSTANTS, GRID_CONSTANTS} from "../../app.constants";
 import { Subscription } from 'rxjs';
 
 @Component({

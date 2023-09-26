@@ -1,5 +1,5 @@
 import {Directive, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
-import {GRID_CONSTANTS} from "../../../app.constants";
+import {GRID_CONSTANTS} from "../../app.constants";
 import {TransformationMatrixService} from "../../services/transformation-matrix.service";
 
 @Directive({

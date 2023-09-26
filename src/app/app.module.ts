@@ -2,29 +2,27 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-import { GridComponent } from './game-overview/grid/grid.component';
-import { GameOverviewComponent } from './game-overview/game-overview.component';
-import { GameControlsComponent } from './game-overview/sidebar/game-controls/game-controls.component';
-import { SidebarComponent } from './game-overview/sidebar/sidebar.component';
+import { GridComponent } from './grid/grid.component';
+import { GameControlsComponent } from './sidebar/game-controls/game-controls.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
 import { FormsModule } from "@angular/forms";
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RulesComponent } from './game-overview/sidebar/rules/rules.component';
+import { RulesComponent } from './sidebar/rules/rules.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import {NgOptimizedImage} from "@angular/common";
 import {MatCheckboxModule} from "@angular/material/checkbox";
-import { EditToolsComponent } from './game-overview/sidebar/edit-tools/edit-tools.component';
-import { EncyclopediaComponent } from './game-overview/sidebar/encyclopedia/encyclopedia.component';
-import { CanvasPanDirective } from './game-overview/grid/directives/canvas-pan.directive';
-import { CanvasZoomDirective } from './game-overview/grid/directives/canvas-zoom.directive';
-import { CanvasClickDirective } from './game-overview/grid/directives/canvas-click.directive';
+import { EditToolsComponent } from './sidebar/edit-tools/edit-tools.component';
+import { EncyclopediaComponent } from './sidebar/encyclopedia/encyclopedia.component';
+import { CanvasPanDirective } from './grid/directives/canvas-pan.directive';
+import { CanvasZoomDirective } from './grid/directives/canvas-zoom.directive';
+import { CanvasClickDirective } from './grid/directives/canvas-click.directive';
 
 @NgModule({
   declarations: [
     AppComponent,
     GridComponent,
-    GameOverviewComponent,
     GameControlsComponent,
     SidebarComponent,
     RulesComponent,

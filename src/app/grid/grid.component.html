@@ -1,0 +1,8 @@
+<div class="canvas-container"
+     appCanvasPan [gridSize]="gridProperties.gridSize" (panUpdated)="handlePan($event)"
+     appCanvasZoom (zoomRequested)="handleZoom()"
+     appCanvasClick [totalPanDistance]="gridProperties.totalPanDistance" (canvasClicked)="handleCanvasClick($event)" (rightClicked)="handleRightClick($event)">
+  <canvas #gameCanvas class="layer" [attr.width]="drawingContext.CanvasWidth" [attr.height]="drawingContext.CanvasHeight"></canvas>
+  <canvas #gridCanvas class="layer" [attr.width]="drawingContext.CanvasWidth" [attr.height]="drawingContext.CanvasHeight"></canvas>
+  <div class="generation-counter">Generation: {{gameProperties.generationCount}}</div>
+</div>

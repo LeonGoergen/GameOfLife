@@ -1,6 +1,7 @@
-import {GRID_CONSTANTS} from "../../../app.constants";
+import {GRID_CONSTANTS} from "../../app.constants";
+import {ICell} from "./icell.model";
 
-export class Cell {
+export class Cell implements ICell {
   public alive: boolean;
   public x: number;
   public y: number;

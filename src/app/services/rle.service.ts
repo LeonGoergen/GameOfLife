@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {Cell} from "../grid/cell/cell.model";
+import {Cell} from "../grid/cell/cell";
 import {Subject} from "rxjs";
-import {GRID_CONSTANTS} from "../../app.constants";
+import {GRID_CONSTANTS} from "../app.constants";
 
 @Injectable({
   providedIn: 'root'
