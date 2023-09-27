@@ -19,6 +19,7 @@ import { CanvasPanDirective } from './grid/directives/canvas-pan.directive';
 import { CanvasZoomDirective } from './grid/directives/canvas-zoom.directive';
 import { CanvasClickDirective } from './grid/directives/canvas-click.directive';
 import { ContextMenuComponent } from './grid/context-menu/context-menu.component';
+import { A11yModule } from '@angular/cdk/a11y';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { ContextMenuComponent } from './grid/context-menu/context-menu.component
     MatDialogModule,
     NgOptimizedImage,
     MatCheckboxModule,
+    A11yModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -119,10 +119,9 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     requestAnimationFrame(() => { this.drawCells(); });
   }
 
-  protected async handleRightClick(key: string): Promise<void> {
-    const cell: Cell = this.gameProperties.cells.get(key)!;
-    const rleString: string = await navigator.clipboard.readText();
-    this.rleService.decodeRLE(rleString, cell.x, cell.y);
+  protected async handleRleStrings(eventData: { key: string; rleString: string }): Promise<void> {
+    const cell: Cell = this.gameProperties.cells.get(eventData.key)!;
+    this.rleService.decodeRLE(eventData.rleString, cell.x, cell.y);
   }
 
   private onCellsLoaded(cells: Cell[]): void {

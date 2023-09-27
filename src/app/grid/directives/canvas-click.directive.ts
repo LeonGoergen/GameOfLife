@@ -10,7 +10,7 @@ import {ContextMenuComponent} from "../context-menu/context-menu.component";
 export class CanvasClickDirective {
   @Input() totalPanDistance!: number;
   @Output() canvasClicked: EventEmitter<string> = new EventEmitter<string>();
-  @Output() rightClicked: EventEmitter<string> = new EventEmitter<string>();
+  @Output() rightClicked: EventEmitter<{ key: string; rleString: string }> = new EventEmitter<{ key: string; rleString: string }>();
 
   constructor(private el: ElementRef,
               private transformationMatrixService: TransformationMatrixService,
@@ -19,17 +19,30 @@ export class CanvasClickDirective {
   @HostListener('click', ['$event'])
   handleCanvasClick(event: MouseEvent): void {
     if (this.totalPanDistance > GRID_CONSTANTS.PAN_DISTANCE_THRESHOLD) { return; }
-
     const key: string = this.getCellKeyByCoordinates(event);
     this.canvasClicked.emit(key);
   }
 
   @HostListener('contextmenu', ['$event'])
-  handleRightClick(event: MouseEvent): void {
+  async handleRightClick(event: MouseEvent): Promise<void> {
     event.preventDefault();
     const key: string = this.getCellKeyByCoordinates(event);
-    this.dialog.open(ContextMenuComponent);
-    this.rightClicked.emit(key);
+    const dialogConfig: MatDialogConfig = new MatDialogConfig();
+    dialogConfig.data = { cellKey: key };
+    dialogConfig.position = { left: `${event.clientX}px`, top: `${event.clientY}px` };
+    const dialogRef: MatDialogRef<ContextMenuComponent> = this.dialog.open(ContextMenuComponent, dialogConfig);
+    const result = await dialogRef.afterClosed().toPromise();
+
+    switch (result?.action) {
+      case 'paste':
+        const rleStringPaste: string = result?.rleString;
+        this.rightClicked.emit({key, rleString: rleStringPaste});
+        break;
+      case 'insert':
+        const rleStringInsert: string = result?.rleString;
+        this.rightClicked.emit({key, rleString: rleStringInsert});
+        break;
+    }
   }
 
   private getCellKeyByCoordinates(event: MouseEvent): string {
