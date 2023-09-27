@@ -4,7 +4,7 @@
   left: 0;
   height: 100vh;
   width: 250px;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.85);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -15,7 +15,7 @@
 }
 
 .sidebar.minimized {
-  width: 10px;
+  width: 5px;
 }
 
 .sidebar .toggle-icon {

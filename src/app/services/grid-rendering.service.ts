@@ -143,7 +143,7 @@ export class GridRenderingService {
     return drawingContext;
   }
 
-  private getCellsToCheck(gameProperties: GameProperties): Cell[] { //TODO: Performance improvement
+  private getCellsToCheck(gameProperties: GameProperties): Cell[] {
     const keys: string[] = [];
 
     for (let x: number = this.visibleGridRange.startCol; x <= this.visibleGridRange.endCol; x++) {

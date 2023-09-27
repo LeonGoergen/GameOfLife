@@ -99,3 +99,7 @@ button:hover {
 .pattern p {
   text-align: center;
 }
+
+::ng-deep .mat-tab-group .mat-tab-label {
+  color: white !important;
+}

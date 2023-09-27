@@ -6,19 +6,21 @@
     The following sections provide an illustrative guide to the most common patterns that emerge in the Game of Life.
   </p>
 
-  <div *ngFor="let category of categories">
-    <hr class="divider">
-    <h2 class="heading">{{ category.title }}</h2>
-    <p class="paragraph">{{ category.description }}</p>
-    <div class="pattern-container">
-      <div class="pattern" *ngFor="let pattern of category.patterns">
-        <div class="header">
-          <h3>{{ pattern.title }}</h3>
-          <button (click)="copyToClipboard(pattern.rle)" title="Copy"><mat-icon>content_copy</mat-icon></button>
+  <mat-tab-group class="mat-tab-group">
+    <mat-tab *ngFor="let category of categories" label="{{ category.title }}">
+      <hr class="divider">
+      <h2 class="heading">{{ category.title }}</h2>
+      <p class="paragraph">{{ category.description }}</p>
+      <div class="pattern-container">
+        <div class="pattern" *ngFor="let pattern of category.patterns">
+          <div class="header">
+            <h3>{{ pattern.title }}</h3>
+            <button (click)="copyToClipboard(pattern.rle)" title="Copy"><mat-icon>content_copy</mat-icon></button>
+          </div>
+          <img class="pattern-image" [src]="pattern.img" [alt]="pattern.title">
+          <p class="paragraph">{{ pattern.description }}</p>
         </div>
-        <img class="pattern-image" [src]="pattern.img" [alt]="pattern.title">
-        <p class="paragraph">{{ pattern.description }}</p>
       </div>
-    </div>
-  </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

@@ -1,15 +1,24 @@
 <div class="context-menu">
   <div cdkFocusInitial style="opacity: 0; position: absolute;"></div>
   <div class="info">
-    <span class="info-element">Coordinates: ({{ x }},{{ y }})</span>
+    <span class="coordinates">Coordinates: ({{ x }},{{ y }})</span>
   </div>
   <div class="divider"></div>
   <button class="button" (click)="pasteRle()">Paste</button>
-  <div class="divider"></div>
-  <button class="button" (click)="insertRle(rleInput.value)">Insert Pattern</button>
-  <input #rleInput class="input" type="text" required placeholder="b2ob$o2bo$b2o!" title="RLE encoded pattern">
+  <div class="insert-form">
+    <button class="button" (click)="insertRle(rleInput.value)">Insert Pattern</button>
+    <input
+      #rleInput
+      class="input"
+      type="text"
+      required
+      placeholder="b2ob$o2bo$b2o!"
+      title="RLE encoded pattern"
+      [ngClass]="{ 'invalid-input': !isValidInput && buttonPressed }"
+      (input)="onInput()"
+    >
+  </div>
   <div class="divider"></div>
   <button class="button" (click)="selectArea()">Select Area</button>
-  <div class="divider"></div>
   <button class="button" (click)="onBrushSelect()">Brush Tool</button>
 </div>

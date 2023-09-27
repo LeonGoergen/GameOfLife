@@ -11,11 +11,13 @@ export class ContextMenuComponent {
   protected x: number;
   protected y: number;
 
+  isValidInput: boolean = true;
+  buttonPressed: boolean = false;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ContextMenuComponent>
   ) {
-    console.log(data)
     this.x = data.cellKey.split(',')[0] / GRID_CONSTANTS.CELL_SIZE;
     this.y = data.cellKey.split(',')[1] / GRID_CONSTANTS.CELL_SIZE;
   }
@@ -24,9 +26,27 @@ export class ContextMenuComponent {
     const rleString: string = await navigator.clipboard.readText();
     this.dialogRef.close({action: 'insert', rleString: rleString});
   };
+
   insertRle(rleString: string): void {
-    this.dialogRef.close({action: 'insert', rleString: rleString});
+    if (this.isValidRle(rleString)) {
+      this.dialogRef.close({ action: 'insert', rleString: rleString });
+      this.isValidInput = true;
+    } else {
+      this.isValidInput = false;
+      this.buttonPressed = true;
+    }
   }
+
+  isValidRle(rleString: string): boolean {
+    const pattern = /^[ob$0-9]+!$/;
+    return pattern.test(rleString);
+  }
+
+  onInput(): void {
+    this.isValidInput = true; // Reset input validity
+    this.buttonPressed = false; // Reset button press flag
+  }
+
   selectArea () {};
   onBrushSelect() {};
 }

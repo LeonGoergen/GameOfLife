@@ -13,13 +13,13 @@ import { RulesComponent } from './sidebar/rules/rules.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import {NgOptimizedImage} from "@angular/common";
 import {MatCheckboxModule} from "@angular/material/checkbox";
-import { EditToolsComponent } from './sidebar/edit-tools/edit-tools.component';
 import { EncyclopediaComponent } from './sidebar/encyclopedia/encyclopedia.component';
 import { CanvasPanDirective } from './grid/directives/canvas-pan.directive';
 import { CanvasZoomDirective } from './grid/directives/canvas-zoom.directive';
 import { CanvasClickDirective } from './grid/directives/canvas-click.directive';
 import { ContextMenuComponent } from './grid/context-menu/context-menu.component';
 import { A11yModule } from '@angular/cdk/a11y';
+import {MatTabsModule} from "@angular/material/tabs";
 
 @NgModule({
   declarations: [
@@ -28,7 +28,6 @@ import { A11yModule } from '@angular/cdk/a11y';
     GameControlsComponent,
     SidebarComponent,
     RulesComponent,
-    EditToolsComponent,
     EncyclopediaComponent,
     CanvasPanDirective,
     CanvasZoomDirective,
@@ -44,7 +43,8 @@ import { A11yModule } from '@angular/cdk/a11y';
     MatDialogModule,
     NgOptimizedImage,
     MatCheckboxModule,
-    A11yModule
+    A11yModule,
+    MatTabsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -19,6 +19,6 @@ export const GRID_COLORS = {
 };
 
 export const CONTROLS_CONSTANTS  = {
-  MAX_GEN_PER_SECOND: 500.0,
+  MAX_GEN_PER_SECOND: 300.0,
   MIN_GEN_PER_SECOND: 1,
 }
