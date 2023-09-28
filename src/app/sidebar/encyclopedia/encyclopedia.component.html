@@ -6,9 +6,10 @@
     The following sections provide an illustrative guide to the most common patterns that emerge in the Game of Life.
   </p>
 
-  <mat-tab-group class="mat-tab-group">
-    <mat-tab *ngFor="let category of categories" label="{{ category.title }}">
-      <hr class="divider">
+  <hr class="divider">
+  <mat-tab-group>
+    <mat-tab *ngFor="let category of categories" label="{{ category.title }}" class="mat-tab-label">
+
       <h2 class="heading">{{ category.title }}</h2>
       <p class="paragraph">{{ category.description }}</p>
       <div class="pattern-container">

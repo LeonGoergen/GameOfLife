@@ -28,6 +28,8 @@ export class ContextMenuComponent {
   };
 
   insertRle(rleString: string): void {
+    rleString = rleString.replace(/\s+/g, '');
+
     if (this.isValidRle(rleString)) {
       this.dialogRef.close({ action: 'insert', rleString: rleString });
       this.isValidInput = true;
