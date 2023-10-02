@@ -9,6 +9,7 @@ import {ContextMenuComponent} from "../context-menu/context-menu.component";
 })
 export class CanvasClickDirective {
   @Input() totalPanDistance!: number;
+  @Input() transformationMatrix!: any;
   @Output() canvasClicked: EventEmitter<string> = new EventEmitter<string>();
   @Output() rightClicked: EventEmitter<{ key: string; rleString: string }> = new EventEmitter<{ key: string; rleString: string }>();
 
@@ -51,7 +52,7 @@ export class CanvasClickDirective {
     const x: number = event.clientX - rect.left;
     const y: number = event.clientY - rect.top;
 
-    const inverseMatrix: number[] = this.transformationMatrixService.inverseMatrix;
+    const inverseMatrix: number[] = this.transformationMatrixService.getInverseMatrix(this.transformationMatrix);
     const worldPoint: {x: number, y:number} = this.transformationMatrixService.transformPoint({ x, y }, inverseMatrix);
 
     const cellX: number = Math.floor(worldPoint.x / GRID_CONSTANTS.CELL_SIZE) * GRID_CONSTANTS.CELL_SIZE;

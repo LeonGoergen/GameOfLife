@@ -12,6 +12,8 @@ import {GridPropertiesFactoryService} from "../models/factory/grid-properties-fa
 import {GamePropertiesFactoryService} from "../models/factory/game-properties-factory.service";
 import {GameLogicService} from "../services/game-logic.service";
 import {GridRenderingService} from "../services/grid-rendering.service";
+import {TransformationMatrixFactoryService} from "../models/factory/transformation-matrix-factory.service";
+import {TransformationMatrix} from "../models/transformation-matrix.model";
 
 @Component({
   selector: 'app-grid',
@@ -25,6 +27,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   protected drawingContext!: DrawingContext;
   protected gridProperties!: GridProperties;
   protected gameProperties!: GameProperties;
+  protected transformationMatrix!: TransformationMatrix;
 
   private subscriptions: Subscription[] = [];
 
@@ -34,6 +37,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
               private drawingContextFactoryService: DrawingContextFactoryService,
               private gridPropertiesFactoryService: GridPropertiesFactoryService,
               private gamePropertiesFactoryService: GamePropertiesFactoryService,
+              private transformationMatrixFactoryService: TransformationMatrixFactoryService,
               private gameLogicService: GameLogicService,
               private gridRenderingService: GridRenderingService) { }
 
@@ -41,6 +45,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
     this.drawingContext = this.drawingContextFactoryService.create(this.gridCanvas, this.gameCanvas);
     this.gridProperties = this.gridPropertiesFactoryService.create();
     this.gameProperties = this.gamePropertiesFactoryService.create();
+    this.transformationMatrix = this.transformationMatrixFactoryService.create();
 
     this.subscriptions.push(
       this.gameService.nextGeneration$.subscribe((drawing: boolean) => this.onNextGeneration(drawing)),
@@ -51,7 +56,6 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
       this.gameService.gridLines$.subscribe((gridLines: boolean) => this.toggleGridLines(gridLines)),
       this.gameService.saveCheckpoint$.subscribe(() => this.saveCheckpoint()),
       this.gameService.returnToCheckpoint$.subscribe(() => this.returnToCheckpoint()),
-      this.rleService.rleLoaded$.subscribe((cells: Cell[]) => this.onCellsLoaded(cells)),
   )};
 
   ngAfterViewInit(): void {
@@ -69,7 +73,8 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
       this.gameProperties,
       this.drawingContext,
       this.gridCanvas,
-      this.gameCanvas)
+      this.gameCanvas,
+      this.transformationMatrix)
 
     this.gridProperties = initializationResults.gridProperties;
     this.gameProperties = initializationResults.gameProperties;
@@ -77,11 +82,11 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private drawCells(): void {
-    this.drawingContext = this.gridRenderingService.drawCells(this.drawingContext, this.gameProperties);
+    this.drawingContext = this.gridRenderingService.drawCells(this.drawingContext, this.gameProperties, this.gridProperties, this.transformationMatrix);
   }
 
   private drawGridLines(): void {
-    this.drawingContext = this.gridRenderingService.drawGridLines(this.drawingContext, this.gridProperties);
+    this.drawingContext = this.gridRenderingService.drawGridLines(this.drawingContext, this.gridProperties, this.transformationMatrix);
   }
 
   private toggleGridLines(gridLines: boolean): void {
@@ -98,14 +103,14 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   protected handlePan(totalPanDistance: number): void {
     this.gridProperties.totalPanDistance = totalPanDistance;
-    this.gridRenderingService.calculateVisibleGridRange(this.gameCanvas);
+    this.gridRenderingService.calculateVisibleGridRange(this.gameCanvas, this.gridProperties, this.transformationMatrix);
     requestAnimationFrame(() => { this.drawGridLines(); this.drawCells(); });
 
     setTimeout(() => this.gridProperties.totalPanDistance = 0, 500);
   }
 
   protected handleZoom(): void {
-    this.gridRenderingService.calculateVisibleGridRange(this.gameCanvas);
+    this.gridRenderingService.calculateVisibleGridRange(this.gameCanvas, this.gridProperties, this.transformationMatrix);
     requestAnimationFrame(() => { this.drawGridLines(); this.drawCells(); });
   }
 
@@ -121,10 +126,10 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   protected async handleRleStrings(eventData: { key: string; rleString: string }): Promise<void> {
     const cell: Cell = this.gameProperties.cells.get(eventData.key)!;
-    this.rleService.decodeRLE(eventData.rleString, cell.x, cell.y);
-  }
+    const cells: Cell[] | null = this.rleService.decodeRLE(eventData.rleString, cell.x, cell.y);
 
-  private onCellsLoaded(cells: Cell[]): void {
+    if (!cells) { return; }
+
     cells.forEach(cell => {
       this.gameProperties.cells.set(cell.key, cell);
       this.gameProperties.cellsToCheck.add(cell.key);

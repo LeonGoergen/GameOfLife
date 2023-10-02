@@ -11,6 +11,7 @@ export class CanvasPanDirective {
   private totalPanDistance: number = 0;
 
   @Input() gridSize!: number;
+  @Input() transformationMatrix!: any;
   @Output() panUpdated: EventEmitter<number> = new EventEmitter<number>();
 
   constructor(
@@ -33,7 +34,7 @@ export class CanvasPanDirective {
     const deltaX: number = event.clientX - this.lastPanX;
     const deltaY: number = event.clientY - this.lastPanY;
 
-    this.transformationMatrixService.translate(deltaX, deltaY, this.gridSize);
+    this.transformationMatrix = this.transformationMatrixService.translate(this.transformationMatrix, deltaX, deltaY, this.gridSize);
 
     this.lastPanX = event.clientX;
     this.lastPanY = event.clientY;

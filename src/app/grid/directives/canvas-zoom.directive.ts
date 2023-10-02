@@ -7,6 +7,7 @@ import {TransformationMatrixService} from "../../services/transformation-matrix.
 })
 export class CanvasZoomDirective {
   @Input() gridSize!: number;
+  @Input() transformationMatrix!: any;
   @Output() zoomRequested: EventEmitter<{ x: number, y: number, amount: number }> = new EventEmitter<{ x: number, y: number, amount: number }>();
 
   constructor(private el: ElementRef,
@@ -22,7 +23,7 @@ export class CanvasZoomDirective {
     const y: number = event.clientY - rect.top;
     const amount: number = 1 - event.deltaY * GRID_CONSTANTS.ZOOM_FACTOR;
 
-    this.transformationMatrixService.scaleAt({ x, y }, amount, this.gridSize);
+    this.transformationMatrix = this.transformationMatrixService.scaleAt(this.transformationMatrix, { x, y }, amount, this.gridSize);
 
     this.zoomRequested.emit({ x, y, amount });
   }

@@ -5,20 +5,20 @@ import {GridProperties} from "../models/grid-properties.model";
 import {GameProperties} from "../models/game-properties.model";
 import {TransformationMatrixService} from "./transformation-matrix.service";
 import {DrawingContext} from "../models/drawing-context.model";
+import {TransformationMatrix} from "../models/transformation-matrix.model";
 
 @Injectable({
   providedIn: 'root'
 })
 export class GridRenderingService {
-  private visibleGridRange!: {startCol: number, endCol: number, startRow: number, endRow: number};
-
   constructor(private transformationMatrixService: TransformationMatrixService) {}
 
   public initializeGrid(gridProperties: GridProperties,
                         gameProperties: GameProperties,
                         drawingContext: DrawingContext,
                         gridCanvas: ElementRef<HTMLCanvasElement>,
-                        gameCanvas: ElementRef<HTMLCanvasElement>) {
+                        gameCanvas: ElementRef<HTMLCanvasElement>,
+                        transformationMatrix: TransformationMatrix) {
     gameProperties.cells.clear();
     gameProperties.cellsToCheck.clear();
     gameProperties.generationDeltas = [];
@@ -27,10 +27,10 @@ export class GridRenderingService {
     drawingContext.gridCtx.clearRect(0, 0, gridProperties.gridSize, gridProperties.gridSize);
     drawingContext.gameCtx.clearRect(0, 0, gridProperties.gridSize, gridProperties.gridSize);
     gameProperties = this.initializeGridCells(gridProperties, gameProperties);
-    this.panToMiddle(gridProperties, gridCanvas, gameCanvas);
+    this.panToMiddle(gridProperties, gridCanvas, gameCanvas, transformationMatrix);
     requestAnimationFrame((): void => {
-      drawingContext = this.drawGridLines(drawingContext, gridProperties);
-      drawingContext = this.drawCells(drawingContext, gameProperties);
+      drawingContext = this.drawGridLines(drawingContext, gridProperties, transformationMatrix);
+      drawingContext = this.drawCells(drawingContext, gameProperties, gridProperties, transformationMatrix);
     });
 
     return { gameProperties, gridProperties, drawingContext }
@@ -51,7 +51,10 @@ export class GridRenderingService {
     return gameProperties;
   }
 
-  private panToMiddle(gridProperties: GridProperties, gridCanvas: ElementRef<HTMLCanvasElement>, gameCanvas: ElementRef<HTMLCanvasElement>): void {
+  private panToMiddle(gridProperties: GridProperties,
+                      gridCanvas: ElementRef<HTMLCanvasElement>,
+                      gameCanvas: ElementRef<HTMLCanvasElement>,
+                      transformationMatrix: TransformationMatrix): void {
     const middleX: number = gridProperties.gridSize / 2;
     const middleY: number = gridProperties.gridSize / 2;
 
@@ -62,14 +65,16 @@ export class GridRenderingService {
     const translateX: number = canvasMiddleX - middleX;
     const translateY: number = canvasMiddleY - middleY;
 
-    this.transformationMatrixService.setTransform(1, 0, 0, 1, translateX, translateY);
-    this.calculateVisibleGridRange(gameCanvas);
+    transformationMatrix = this.transformationMatrixService.setTransform(transformationMatrix, 1, 0, 0, 1, translateX, translateY);
+    this.calculateVisibleGridRange(gameCanvas, gridProperties, transformationMatrix);
   }
 
-  public calculateVisibleGridRange(gameCanvas: ElementRef<HTMLCanvasElement>): void {
+  public calculateVisibleGridRange(gameCanvas: ElementRef<HTMLCanvasElement>,
+                                   gridProperties: GridProperties,
+                                   transformationMatrix: TransformationMatrix): void {
     const rect: DOMRect = gameCanvas.nativeElement.getBoundingClientRect();
 
-    const inverseMatrix: number[] = this.transformationMatrixService.inverseMatrix;
+    const inverseMatrix: number[] = this.transformationMatrixService.getInverseMatrix(transformationMatrix);
     const topLeft: {x: number, y:number} = this.transformationMatrixService.transformPoint({x: 0, y: 0}, inverseMatrix);
     const bottomRight: {x: number, y:number} = this.transformationMatrixService.transformPoint({x: rect.width, y: rect.height}, inverseMatrix);
 
@@ -78,18 +83,20 @@ export class GridRenderingService {
     const startRow: number = Math.floor(topLeft.y / GRID_CONSTANTS.CELL_SIZE);
     const endRow: number = Math.ceil(bottomRight.y / GRID_CONSTANTS.CELL_SIZE);
 
-    this.visibleGridRange = {startCol, endCol, startRow, endRow};
+    gridProperties.visibleGridRange = {startCol, endCol, startRow, endRow};
   }
 
-  public drawGridLines(drawingContext: DrawingContext, gridProperties: GridProperties): DrawingContext {
+  public drawGridLines(drawingContext: DrawingContext,
+                       gridProperties: GridProperties,
+                       transformationMatrix: TransformationMatrix): DrawingContext {
     drawingContext.gridCtx.clearRect(0, 0, gridProperties.gridSize, gridProperties.gridSize);
 
     if (!gridProperties.gridLines) { return drawingContext; }
 
-    drawingContext.gridCtx.setTransform(...this.transformationMatrixService.matrix as any);
+    drawingContext.gridCtx.setTransform(...this.transformationMatrixService.unpack(transformationMatrix));
     drawingContext.gridCtx.strokeStyle = GRID_COLORS.GRID_LINE;
 
-    const gridSpacing: number = this.getGridSpacing();
+    const gridSpacing: number = this.getGridSpacing(transformationMatrix);
 
     for (let y: number = 0, i: number= 0; y <= gridProperties.gridSize; y += GRID_CONSTANTS.CELL_SIZE * gridSpacing, i += gridSpacing) {
       drawingContext.gridCtx.lineWidth = (i % 6 === 0) ? 2 : 0.5;
@@ -110,8 +117,8 @@ export class GridRenderingService {
     return drawingContext;
   }
 
-  private getGridSpacing(): number {
-    const zoomLevel: number = this.transformationMatrixService.matrix[0];
+  private getGridSpacing(transformationMatrix: TransformationMatrix): number {
+    const zoomLevel: number = this.transformationMatrixService.unpack(transformationMatrix)[0];
     let gridSpacing: number;
 
     const division: number = GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / zoomLevel;
@@ -120,19 +127,22 @@ export class GridRenderingService {
     return gridSpacing;
   }
 
-  public drawCells(drawingContext: DrawingContext, gameProperties: GameProperties): DrawingContext {
-    const startX: number = this.visibleGridRange.startCol * GRID_CONSTANTS.CELL_SIZE;
-    const startY: number = this.visibleGridRange.startRow * GRID_CONSTANTS.CELL_SIZE;
-    const width: number = (this.visibleGridRange.endCol - this.visibleGridRange.startCol) * GRID_CONSTANTS.CELL_SIZE;
-    const height: number = (this.visibleGridRange.endRow - this.visibleGridRange.startRow) * GRID_CONSTANTS.CELL_SIZE;
+  public drawCells(drawingContext: DrawingContext,
+                   gameProperties: GameProperties,
+                   gridProperties: GridProperties,
+                   transformationMatrix: TransformationMatrix): DrawingContext {
+    const startX: number = gridProperties.visibleGridRange.startCol * GRID_CONSTANTS.CELL_SIZE;
+    const startY: number = gridProperties.visibleGridRange.startRow * GRID_CONSTANTS.CELL_SIZE;
+    const width: number = (gridProperties.visibleGridRange.endCol - gridProperties.visibleGridRange.startCol) * GRID_CONSTANTS.CELL_SIZE;
+    const height: number = (gridProperties.visibleGridRange.endRow - gridProperties.visibleGridRange.startRow) * GRID_CONSTANTS.CELL_SIZE;
 
     drawingContext.offscreenCtx.clearRect(startX, startY, width, height);
-    drawingContext.offscreenCtx.setTransform(...this.transformationMatrixService.matrix as any);
+    drawingContext.offscreenCtx.setTransform(...this.transformationMatrixService.unpack(transformationMatrix));
     drawingContext.offscreenCtx.fillStyle = GRID_COLORS.DEAD;
     drawingContext.offscreenCtx.fillRect(startX, startY, width, height);
     drawingContext.offscreenCtx.fillStyle = GRID_COLORS.ALIVE;
 
-    const cellsToCheck: Cell[] = this.getCellsToCheck(gameProperties);
+    const cellsToCheck: Cell[] = this.getCellsToCheck(gameProperties, gridProperties);
     cellsToCheck.forEach(cell => {
       if (cell.alive)
         drawingContext.offscreenCtx.fillRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE);
@@ -143,11 +153,11 @@ export class GridRenderingService {
     return drawingContext;
   }
 
-  private getCellsToCheck(gameProperties: GameProperties): Cell[] {
+  private getCellsToCheck(gameProperties: GameProperties, gridProperties: GridProperties): Cell[] {
     const keys: string[] = [];
 
-    for (let x: number = this.visibleGridRange.startCol; x <= this.visibleGridRange.endCol; x++) {
-      for (let y: number = this.visibleGridRange.startRow; y <= this.visibleGridRange.endRow; y++) {
+    for (let x: number = gridProperties.visibleGridRange.startCol; x <= gridProperties.visibleGridRange.endCol; x++) {
+      for (let y: number = gridProperties.visibleGridRange.startRow; y <= gridProperties.visibleGridRange.endRow; y++) {
         keys.push(`${x * GRID_CONSTANTS.CELL_SIZE},${y * GRID_CONSTANTS.CELL_SIZE}`);
       }
     }
