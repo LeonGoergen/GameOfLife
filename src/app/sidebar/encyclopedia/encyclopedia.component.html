@@ -19,7 +19,7 @@
             <button (click)="copyToClipboard(pattern.rle)" title="Copy"><mat-icon>content_copy</mat-icon></button>
           </div>
           <p class="paragraph">{{ pattern.description }}</p>
-          <img class="pattern-image" [src]="pattern.img" [alt]="pattern.title">
+          <app-mini-grid [rleString]="pattern.rle"></app-mini-grid>
         </div>
       </div>
     </mat-tab>

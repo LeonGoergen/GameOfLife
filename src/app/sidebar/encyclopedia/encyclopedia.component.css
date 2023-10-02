@@ -52,8 +52,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 13vw;
-  min-width: 200px;
+  width: 250px;
   background-color: var(--background-color-darker);
   padding: 10px;
   border-radius: 5px;
@@ -68,10 +67,12 @@
   margin-bottom: 10px;
 }
 
-.pattern-image {
-  width: 100%;
-  height: auto;
+app-mini-grid {
+  width: 250px;
+  height: 250px;
   border-radius: 5px;
+  border: white 2px solid;
+  overflow: hidden;
   box-shadow: var(--shadow-dark);
 }
 

@@ -104,14 +104,14 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   protected handlePan(totalPanDistance: number): void {
     this.gridProperties.totalPanDistance = totalPanDistance;
-    this.gridRenderingService.calculateVisibleGridRange(this.gameCanvas, this.gridProperties, this.transformationMatrix);
+    this.gridRenderingService.calculateVisibleGridRange(this.drawingContext, this.gridProperties, this.transformationMatrix);
     requestAnimationFrame(() => { this.drawGridLines(); this.drawCells(); });
 
     setTimeout(() => this.gridProperties.totalPanDistance = 0, 500);
   }
 
   protected handleZoom(): void {
-    this.gridRenderingService.calculateVisibleGridRange(this.gameCanvas, this.gridProperties, this.transformationMatrix);
+    this.gridRenderingService.calculateVisibleGridRange(this.drawingContext, this.gridProperties, this.transformationMatrix);
     requestAnimationFrame(() => { this.drawGridLines(); this.drawCells(); });
   }
 

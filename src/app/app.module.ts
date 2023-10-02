@@ -20,6 +20,7 @@ import { CanvasClickDirective } from './grid/directives/canvas-click.directive';
 import { ContextMenuComponent } from './grid/context-menu/context-menu.component';
 import { A11yModule } from '@angular/cdk/a11y';
 import {MatTabsModule} from "@angular/material/tabs";
+import { MiniGridComponent } from './grid/mini-grid/mini-grid.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,9 @@ import {MatTabsModule} from "@angular/material/tabs";
     CanvasPanDirective,
     CanvasZoomDirective,
     CanvasClickDirective,
-    ContextMenuComponent
+    ContextMenuComponent,
+    MiniGridComponent,
+    MiniGridComponent
   ],
   imports: [
     BrowserModule,

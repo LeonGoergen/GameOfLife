@@ -1,0 +1,6 @@
+<div class="canvas-container"
+     appCanvasPan [transformationMatrix]="transformationMatrix" [gridSize]="gridProperties.gridSize" (panUpdated)="handlePan($event)"
+     appCanvasZoom (zoomRequested)="handleZoom()" [drawingContext]="drawingContext">
+  <canvas #gameCanvas class="layer" [attr.width]="drawingContext.CanvasWidth" [attr.height]="drawingContext.CanvasHeight"></canvas>
+  <canvas #gridCanvas class="layer" [attr.width]="drawingContext.CanvasWidth" [attr.height]="drawingContext.CanvasHeight"></canvas>
+</div>

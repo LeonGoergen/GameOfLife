@@ -1,0 +1,13 @@
+.canvas-container {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  overflow: hidden;
+}
+
+.layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}

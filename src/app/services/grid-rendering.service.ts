@@ -27,13 +27,15 @@ export class GridRenderingService {
     drawingContext.gridCtx.clearRect(0, 0, gridProperties.gridSize, gridProperties.gridSize);
     drawingContext.gameCtx.clearRect(0, 0, gridProperties.gridSize, gridProperties.gridSize);
     gameProperties = this.initializeGridCells(gridProperties, gameProperties);
-    this.panToMiddle(gridProperties, gridCanvas, gameCanvas, transformationMatrix);
-    requestAnimationFrame((): void => {
-      drawingContext = this.drawGridLines(drawingContext, gridProperties, transformationMatrix);
-      drawingContext = this.drawCells(drawingContext, gameProperties, gridProperties, transformationMatrix);
-    });
+    setTimeout(() => {
+      this.panToMiddle(gridProperties, gridCanvas, drawingContext, transformationMatrix);
+      requestAnimationFrame((): void => {
+        drawingContext = this.drawGridLines(drawingContext, gridProperties, transformationMatrix);
+        drawingContext = this.drawCells(drawingContext, gameProperties, gridProperties, transformationMatrix);
+      });
+    }, 0);
 
-    return { gameProperties, gridProperties, drawingContext }
+    return { gameProperties, gridProperties, drawingContext, transformationMatrix };
   }
 
   private initializeGridCells(gridProperties: GridProperties, gameProperties: GameProperties): GameProperties {
@@ -53,7 +55,7 @@ export class GridRenderingService {
 
   private panToMiddle(gridProperties: GridProperties,
                       gridCanvas: ElementRef<HTMLCanvasElement>,
-                      gameCanvas: ElementRef<HTMLCanvasElement>,
+                      drawingContext: DrawingContext,
                       transformationMatrix: TransformationMatrix): void {
     const middleX: number = gridProperties.gridSize / 2;
     const middleY: number = gridProperties.gridSize / 2;
@@ -66,17 +68,15 @@ export class GridRenderingService {
     const translateY: number = canvasMiddleY - middleY;
 
     transformationMatrix = this.transformationMatrixService.setTransform(transformationMatrix, 1, 0, 0, 1, translateX, translateY);
-    this.calculateVisibleGridRange(gameCanvas, gridProperties, transformationMatrix);
+    this.calculateVisibleGridRange(drawingContext, gridProperties, transformationMatrix);
   }
 
-  public calculateVisibleGridRange(gameCanvas: ElementRef<HTMLCanvasElement>,
+  public calculateVisibleGridRange(drawingContext: DrawingContext,
                                    gridProperties: GridProperties,
                                    transformationMatrix: TransformationMatrix): void {
-    const rect: DOMRect = gameCanvas.nativeElement.getBoundingClientRect();
-
     const inverseMatrix: number[] = this.transformationMatrixService.getInverseMatrix(transformationMatrix);
     const topLeft: {x: number, y:number} = this.transformationMatrixService.transformPoint({x: 0, y: 0}, inverseMatrix);
-    const bottomRight: {x: number, y:number} = this.transformationMatrixService.transformPoint({x: rect.width, y: rect.height}, inverseMatrix);
+    const bottomRight: {x: number, y:number} = this.transformationMatrixService.transformPoint({x: drawingContext.CanvasWidth, y: drawingContext.CanvasHeight}, inverseMatrix);
 
     const startCol: number = Math.floor(topLeft.x / gridProperties.cellSize);
     const endCol: number = Math.ceil(bottomRight.x / gridProperties.cellSize);

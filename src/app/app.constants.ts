@@ -13,9 +13,9 @@ export const MAIN_GRID_CONSTANTS = {
 };
 
 export const MINI_GRID_CONSTANTS = {
-  CANVAS_WIDTH: window.outerWidth,
-  CANVAS_HEIGHT: window.outerHeight,
-  INIT_GRID_SIZE: 400,
+  CANVAS_WIDTH: 250,
+  CANVAS_HEIGHT: 250,
+  INIT_GRID_SIZE: 800,
   CELL_SIZE: 20,
 };
 
