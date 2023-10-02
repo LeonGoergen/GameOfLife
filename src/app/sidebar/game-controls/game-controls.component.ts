@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./game-controls.component.css']
 })
 export class GameControlsComponent implements OnInit, OnDestroy {
-  protected highlightedButton: 'play' | 'pause' | null = null;
+  protected highlightedButton: 'play' | 'pause' | null = 'pause';
   protected checkpointGeneration: number = 0;
   private fps: number = 0;
 
