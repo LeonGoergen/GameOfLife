@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { GRID_CONSTANTS } from '../app.constants';
 import {TransformationMatrix} from "../models/transformation-matrix.model";
+import {DrawingContext} from "../models/drawing-context.model";
+import {MAIN_GRID_CONSTANTS} from "../app.constants";
 
 @Injectable({
   providedIn: 'root',
@@ -55,21 +56,21 @@ export class TransformationMatrixService {
     ];
   }
 
-  private calculateBounds(transformationMatrix: TransformationMatrix, maxGridSize: number): { maxTranslateX: number, minTranslateX: number, maxTranslateY: number, minTranslateY: number } {
+  private calculateBounds(transformationMatrix: TransformationMatrix, drawingContext: DrawingContext, maxGridSize: number): { maxTranslateX: number, minTranslateX: number, maxTranslateY: number, minTranslateY: number } {
     const maxTranslateX: number = 0;
-    const minTranslateX: number = GRID_CONSTANTS.CANVAS_WIDTH - (maxGridSize * transformationMatrix.scaleX);
+    const minTranslateX: number = drawingContext.CanvasWidth - (maxGridSize * transformationMatrix.scaleX);
 
     const maxTranslateY: number = 0;
-    const minTranslateY: number = GRID_CONSTANTS.CANVAS_HEIGHT - (maxGridSize * transformationMatrix.scaleY);
+    const minTranslateY: number = drawingContext.CanvasHeight - (maxGridSize * transformationMatrix.scaleY);
 
     return { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY };
   }
 
-  public translate(transformationMatrix: TransformationMatrix, deltaX: number, deltaY: number, maxGridSize: number): TransformationMatrix {
+  public translate(transformationMatrix: TransformationMatrix, drawingContext: DrawingContext, deltaX: number, deltaY: number, maxGridSize: number): TransformationMatrix {
     const newTranslateX: number = transformationMatrix.translateX + deltaX;
     const newTranslateY: number = transformationMatrix.translateY + deltaY;
 
-    const { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY } = this.calculateBounds(transformationMatrix, maxGridSize);
+    const { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY } = this.calculateBounds(transformationMatrix, drawingContext, maxGridSize);
 
     transformationMatrix.translateX = Math.min(maxTranslateX, Math.max(minTranslateX, newTranslateX));
     transformationMatrix.translateY = Math.min(maxTranslateY, Math.max(minTranslateY, newTranslateY));
@@ -77,21 +78,21 @@ export class TransformationMatrixService {
     return transformationMatrix;
   }
 
-  public scaleAt(transformationMatrix: TransformationMatrix, point: { x: number; y: number }, amount: number, maxGridSize: number): TransformationMatrix {
+  public scaleAt(transformationMatrix: TransformationMatrix, drawingContext: DrawingContext, point: { x: number; y: number }, amount: number, maxGridSize: number): TransformationMatrix {
     const newScale: number = transformationMatrix.scaleX * amount;
 
-    const potentialMinTranslateX: number = GRID_CONSTANTS.CANVAS_WIDTH - (maxGridSize * newScale);
-    const potentialMinTranslateY: number = GRID_CONSTANTS.CANVAS_HEIGHT - (maxGridSize * newScale);
+    const potentialMinTranslateX: number = drawingContext.CanvasWidth - (maxGridSize * newScale);
+    const potentialMinTranslateY: number = drawingContext.CanvasHeight - (maxGridSize * newScale);
 
     if (potentialMinTranslateX > 0 || potentialMinTranslateY > 0) { return transformationMatrix; }
-    if (newScale < GRID_CONSTANTS.MIN_ZOOM_LEVEL || newScale > GRID_CONSTANTS.MAX_ZOOM_LEVEL) { return transformationMatrix; }
+    if (newScale < MAIN_GRID_CONSTANTS.MIN_ZOOM_LEVEL || newScale > MAIN_GRID_CONSTANTS.MAX_ZOOM_LEVEL) { return transformationMatrix; }
 
     transformationMatrix.scaleX = transformationMatrix.scaleY = newScale;
 
     transformationMatrix.translateX = point.x - (point.x - transformationMatrix.translateX) * amount;
     transformationMatrix.translateY = point.y - (point.y - transformationMatrix.translateY) * amount;
 
-    const { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY } = this.calculateBounds(transformationMatrix, maxGridSize);
+    const { maxTranslateX, minTranslateX, maxTranslateY, minTranslateY } = this.calculateBounds(transformationMatrix, drawingContext, maxGridSize);
 
     transformationMatrix.translateX = Math.min(maxTranslateX, Math.max(minTranslateX, transformationMatrix.translateX));
     transformationMatrix.translateY = Math.min(maxTranslateY, Math.max(minTranslateY, transformationMatrix.translateY));

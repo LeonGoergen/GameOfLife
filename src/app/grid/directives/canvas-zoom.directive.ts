@@ -1,6 +1,7 @@
 import {Directive, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
-import {GRID_CONSTANTS} from "../../app.constants";
+import {MAIN_GRID_CONSTANTS} from "../../app.constants";
 import {TransformationMatrixService} from "../../services/transformation-matrix.service";
+import {DrawingContext} from "../../models/drawing-context.model";
 
 @Directive({
   selector: '[appCanvasZoom]'
@@ -8,6 +9,7 @@ import {TransformationMatrixService} from "../../services/transformation-matrix.
 export class CanvasZoomDirective {
   @Input() gridSize!: number;
   @Input() transformationMatrix!: any;
+  @Input() drawingContext!: DrawingContext;
   @Output() zoomRequested: EventEmitter<{ x: number, y: number, amount: number }> = new EventEmitter<{ x: number, y: number, amount: number }>();
 
   constructor(private el: ElementRef,
@@ -21,9 +23,9 @@ export class CanvasZoomDirective {
 
     const x: number = event.clientX - rect.left;
     const y: number = event.clientY - rect.top;
-    const amount: number = 1 - event.deltaY * GRID_CONSTANTS.ZOOM_FACTOR;
+    const amount: number = 1 - event.deltaY * MAIN_GRID_CONSTANTS.ZOOM_FACTOR;
 
-    this.transformationMatrix = this.transformationMatrixService.scaleAt(this.transformationMatrix, { x, y }, amount, this.gridSize);
+    this.transformationMatrix = this.transformationMatrixService.scaleAt(this.transformationMatrix, this.drawingContext, { x, y }, amount, this.gridSize);
 
     this.zoomRequested.emit({ x, y, amount });
   }

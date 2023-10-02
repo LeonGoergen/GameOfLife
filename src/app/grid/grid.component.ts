@@ -14,6 +14,7 @@ import {GameLogicService} from "../services/game-logic.service";
 import {GridRenderingService} from "../services/grid-rendering.service";
 import {TransformationMatrixFactoryService} from "../models/factory/transformation-matrix-factory.service";
 import {TransformationMatrix} from "../models/transformation-matrix.model";
+import {MAIN_GRID_CONSTANTS} from "../app.constants";
 
 @Component({
   selector: 'app-grid',
@@ -42,8 +43,8 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
               private gridRenderingService: GridRenderingService) { }
 
   ngOnInit(): void {
-    this.drawingContext = this.drawingContextFactoryService.create(this.gridCanvas, this.gameCanvas);
-    this.gridProperties = this.gridPropertiesFactoryService.create();
+    this.drawingContext = this.drawingContextFactoryService.create(this.gridCanvas, this.gameCanvas, MAIN_GRID_CONSTANTS.CANVAS_WIDTH, MAIN_GRID_CONSTANTS.CANVAS_HEIGHT);
+    this.gridProperties = this.gridPropertiesFactoryService.create(MAIN_GRID_CONSTANTS.INIT_GRID_SIZE, MAIN_GRID_CONSTANTS.CELL_SIZE);
     this.gameProperties = this.gamePropertiesFactoryService.create();
     this.transformationMatrix = this.transformationMatrixFactoryService.create();
 
@@ -126,7 +127,7 @@ export class GridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   protected async handleRleStrings(eventData: { key: string; rleString: string }): Promise<void> {
     const cell: Cell = this.gameProperties.cells.get(eventData.key)!;
-    const cells: Cell[] | null = this.rleService.decodeRLE(eventData.rleString, cell.x, cell.y);
+    const cells: Cell[] | null = this.rleService.decodeRLE(this.gridProperties, eventData.rleString, cell.x, cell.y);
 
     if (!cells) { return; }
 

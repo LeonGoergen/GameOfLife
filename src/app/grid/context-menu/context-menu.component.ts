@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {GRID_CONSTANTS} from "../../app.constants";
+import {GridProperties} from "../../models/grid-properties.model";
 
 @Component({
   selector: 'app-context-menu',
@@ -16,10 +16,10 @@ export class ContextMenuComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<ContextMenuComponent>
+    public dialogRef: MatDialogRef<ContextMenuComponent>,
   ) {
-    this.x = data.cellKey.split(',')[0] / GRID_CONSTANTS.CELL_SIZE;
-    this.y = data.cellKey.split(',')[1] / GRID_CONSTANTS.CELL_SIZE;
+    this.x = data.cellKey.split(',')[0] / data.gridProperties.cellSize;
+    this.y = data.cellKey.split(',')[1] / data.gridProperties.cellSize;
   }
 
   async pasteRle (): Promise<void> {

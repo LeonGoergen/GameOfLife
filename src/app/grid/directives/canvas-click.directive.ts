@@ -1,8 +1,9 @@
 import {Directive, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
-import {GRID_CONSTANTS} from "../../app.constants";
+import {MAIN_GRID_CONSTANTS} from "../../app.constants";
 import {TransformationMatrixService} from "../../services/transformation-matrix.service";
 import {MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
 import {ContextMenuComponent} from "../context-menu/context-menu.component";
+import {GridProperties} from "../../models/grid-properties.model";
 
 @Directive({
   selector: '[appCanvasClick]'
@@ -10,6 +11,7 @@ import {ContextMenuComponent} from "../context-menu/context-menu.component";
 export class CanvasClickDirective {
   @Input() totalPanDistance!: number;
   @Input() transformationMatrix!: any;
+  @Input() gridProperties!: GridProperties;
   @Output() canvasClicked: EventEmitter<string> = new EventEmitter<string>();
   @Output() rightClicked: EventEmitter<{ key: string; rleString: string }> = new EventEmitter<{ key: string; rleString: string }>();
 
@@ -19,7 +21,7 @@ export class CanvasClickDirective {
 
   @HostListener('click', ['$event'])
   handleCanvasClick(event: MouseEvent): void {
-    if (this.totalPanDistance > GRID_CONSTANTS.PAN_DISTANCE_THRESHOLD) { return; }
+    if (this.totalPanDistance > MAIN_GRID_CONSTANTS.PAN_DISTANCE_THRESHOLD) { return; }
     const key: string = this.getCellKeyByCoordinates(event);
     this.canvasClicked.emit(key);
   }
@@ -29,7 +31,7 @@ export class CanvasClickDirective {
     event.preventDefault();
     const key: string = this.getCellKeyByCoordinates(event);
     const dialogConfig: MatDialogConfig = new MatDialogConfig();
-    dialogConfig.data = { cellKey: key };
+    dialogConfig.data = { cellKey: key, gridProperties: this.gridProperties };
     dialogConfig.position = { left: `${event.clientX}px`, top: `${event.clientY}px` };
     const dialogRef: MatDialogRef<ContextMenuComponent> = this.dialog.open(ContextMenuComponent, dialogConfig);
     const result = await dialogRef.afterClosed().toPromise();
@@ -55,8 +57,8 @@ export class CanvasClickDirective {
     const inverseMatrix: number[] = this.transformationMatrixService.getInverseMatrix(this.transformationMatrix);
     const worldPoint: {x: number, y:number} = this.transformationMatrixService.transformPoint({ x, y }, inverseMatrix);
 
-    const cellX: number = Math.floor(worldPoint.x / GRID_CONSTANTS.CELL_SIZE) * GRID_CONSTANTS.CELL_SIZE;
-    const cellY: number = Math.floor(worldPoint.y / GRID_CONSTANTS.CELL_SIZE) * GRID_CONSTANTS.CELL_SIZE;
+    const cellX: number = Math.floor(worldPoint.x / this.gridProperties.cellSize) * this.gridProperties.cellSize;
+    const cellY: number = Math.floor(worldPoint.y / this.gridProperties.cellSize) * this.gridProperties.cellSize;
     return `${cellX},${cellY}`;
   }
 }

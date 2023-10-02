@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import {Cell} from "../grid/cell/cell";
-import {GRID_CONSTANTS} from "../app.constants";
+import {GridProperties} from "../models/grid-properties.model";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RleService {
-  public decodeRLE(rleString: string, startX: number, startY: number): Cell[] | null {
+  public decodeRLE(gridProperties: GridProperties,
+                   rleString: string,
+                   startX: number,
+                   startY: number): Cell[] | null {
     if (/[^bo$0-9!#x]/.test(rleString)) {
       console.error('Invalid characters in input string.');
       return null;
@@ -26,9 +29,10 @@ export class RleService {
       for (let j: number = 0; j < step; j++) {
         cells.push(
           new Cell(
-            startX + x * GRID_CONSTANTS.CELL_SIZE,
-            startY + y * GRID_CONSTANTS.CELL_SIZE,
-            true
+            startX + x * gridProperties.cellSize,
+            startY + y * gridProperties.cellSize,
+            true,
+            gridProperties.cellSize
           )
         );
         x++;

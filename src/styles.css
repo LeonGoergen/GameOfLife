@@ -22,7 +22,7 @@ body {
 html { height: 100%; }
 
 .mat-mdc-tab-group, .mat-mdc-tab-nav-bar {
-  --mdc-tab-indicator-active-indicator-color: #ffffff;
+  --mdc-tab-indicator-active-indicator-color: var(--primary-color);
   --mat-tab-header-disabled-ripple-color: rgba(0, 0, 0, 0.38);
   --mat-tab-header-pagination-icon-color: #ffffff;
 

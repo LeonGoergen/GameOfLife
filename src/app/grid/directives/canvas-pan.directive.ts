@@ -1,5 +1,6 @@
 import {Directive, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
 import {TransformationMatrixService} from "../../services/transformation-matrix.service";
+import {DrawingContext} from "../../models/drawing-context.model";
 
 @Directive({
   selector: '[appCanvasPan]'
@@ -12,6 +13,7 @@ export class CanvasPanDirective {
 
   @Input() gridSize!: number;
   @Input() transformationMatrix!: any;
+  @Input() drawingContext!: DrawingContext;
   @Output() panUpdated: EventEmitter<number> = new EventEmitter<number>();
 
   constructor(
@@ -34,7 +36,7 @@ export class CanvasPanDirective {
     const deltaX: number = event.clientX - this.lastPanX;
     const deltaY: number = event.clientY - this.lastPanY;
 
-    this.transformationMatrix = this.transformationMatrixService.translate(this.transformationMatrix, deltaX, deltaY, this.gridSize);
+    this.transformationMatrix = this.transformationMatrixService.translate(this.transformationMatrix, this.drawingContext, deltaX, deltaY, this.gridSize);
 
     this.lastPanX = event.clientX;
     this.lastPanY = event.clientY;

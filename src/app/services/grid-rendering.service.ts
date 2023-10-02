@@ -1,5 +1,5 @@
 import {ElementRef, Injectable} from '@angular/core';
-import {GRID_COLORS, GRID_CONSTANTS} from "../app.constants";
+import {GRID_COLORS, MAIN_GRID_CONSTANTS} from "../app.constants";
 import {Cell} from "../grid/cell/cell";
 import {GridProperties} from "../models/grid-properties.model";
 import {GameProperties} from "../models/game-properties.model";
@@ -37,13 +37,13 @@ export class GridRenderingService {
   }
 
   private initializeGridCells(gridProperties: GridProperties, gameProperties: GameProperties): GameProperties {
-    const cellSize: number = GRID_CONSTANTS.CELL_SIZE;
+    const cellSize: number = gridProperties.cellSize;
     const range: number[] = Array.from({length: gridProperties.gridSize / cellSize}, (_, i: number) => i * cellSize);
 
     const cellPositions: {x: number, y: number}[] = range.flatMap(x => range.map(y => ({ x, y })));
 
     cellPositions.forEach(({ x, y }) => {
-      const cell: Cell = new Cell(x, y, false);
+      const cell: Cell = new Cell(x, y, false, cellSize);
       gameProperties.cells.set(cell.key, cell);
       if (cell.alive) { gameProperties.cellsToCheck.add(cell.key); }
     });
@@ -78,10 +78,10 @@ export class GridRenderingService {
     const topLeft: {x: number, y:number} = this.transformationMatrixService.transformPoint({x: 0, y: 0}, inverseMatrix);
     const bottomRight: {x: number, y:number} = this.transformationMatrixService.transformPoint({x: rect.width, y: rect.height}, inverseMatrix);
 
-    const startCol: number = Math.floor(topLeft.x / GRID_CONSTANTS.CELL_SIZE);
-    const endCol: number = Math.ceil(bottomRight.x / GRID_CONSTANTS.CELL_SIZE);
-    const startRow: number = Math.floor(topLeft.y / GRID_CONSTANTS.CELL_SIZE);
-    const endRow: number = Math.ceil(bottomRight.y / GRID_CONSTANTS.CELL_SIZE);
+    const startCol: number = Math.floor(topLeft.x / gridProperties.cellSize);
+    const endCol: number = Math.ceil(bottomRight.x / gridProperties.cellSize);
+    const startRow: number = Math.floor(topLeft.y / gridProperties.cellSize);
+    const endRow: number = Math.ceil(bottomRight.y / gridProperties.cellSize);
 
     gridProperties.visibleGridRange = {startCol, endCol, startRow, endRow};
   }
@@ -98,7 +98,7 @@ export class GridRenderingService {
 
     const gridSpacing: number = this.getGridSpacing(transformationMatrix);
 
-    for (let y: number = 0, i: number= 0; y <= gridProperties.gridSize; y += GRID_CONSTANTS.CELL_SIZE * gridSpacing, i += gridSpacing) {
+    for (let y: number = 0, i: number= 0; y <= gridProperties.gridSize; y += gridProperties.cellSize * gridSpacing, i += gridSpacing) {
       drawingContext.gridCtx.lineWidth = (i % 6 === 0) ? 2 : 0.5;
       drawingContext.gridCtx.beginPath();
       drawingContext.gridCtx.moveTo(0, y);
@@ -106,7 +106,7 @@ export class GridRenderingService {
       drawingContext.gridCtx.stroke();
     }
 
-    for (let x: number = 0, i: number = 0; x <= gridProperties.gridSize; x += GRID_CONSTANTS.CELL_SIZE * gridSpacing, i += gridSpacing) {
+    for (let x: number = 0, i: number = 0; x <= gridProperties.gridSize; x += gridProperties.cellSize * gridSpacing, i += gridSpacing) {
       drawingContext.gridCtx.lineWidth = (i % 6 === 0) ? 2 : 0.5;
       drawingContext.gridCtx.beginPath();
       drawingContext.gridCtx.moveTo(x, 0);
@@ -121,7 +121,7 @@ export class GridRenderingService {
     const zoomLevel: number = this.transformationMatrixService.unpack(transformationMatrix)[0];
     let gridSpacing: number;
 
-    const division: number = GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / zoomLevel;
+    const division: number = MAIN_GRID_CONSTANTS.ZOOM_LEVEL_THRESHOLD / zoomLevel;
     gridSpacing = Math.pow(2, Math.ceil(Math.log2(division)));
 
     return gridSpacing;
@@ -131,10 +131,10 @@ export class GridRenderingService {
                    gameProperties: GameProperties,
                    gridProperties: GridProperties,
                    transformationMatrix: TransformationMatrix): DrawingContext {
-    const startX: number = gridProperties.visibleGridRange.startCol * GRID_CONSTANTS.CELL_SIZE;
-    const startY: number = gridProperties.visibleGridRange.startRow * GRID_CONSTANTS.CELL_SIZE;
-    const width: number = (gridProperties.visibleGridRange.endCol - gridProperties.visibleGridRange.startCol) * GRID_CONSTANTS.CELL_SIZE;
-    const height: number = (gridProperties.visibleGridRange.endRow - gridProperties.visibleGridRange.startRow) * GRID_CONSTANTS.CELL_SIZE;
+    const startX: number = gridProperties.visibleGridRange.startCol * gridProperties.cellSize;
+    const startY: number = gridProperties.visibleGridRange.startRow * gridProperties.cellSize;
+    const width: number = (gridProperties.visibleGridRange.endCol - gridProperties.visibleGridRange.startCol) * gridProperties.cellSize;
+    const height: number = (gridProperties.visibleGridRange.endRow - gridProperties.visibleGridRange.startRow) * gridProperties.cellSize;
 
     drawingContext.offscreenCtx.clearRect(startX, startY, width, height);
     drawingContext.offscreenCtx.setTransform(...this.transformationMatrixService.unpack(transformationMatrix));
@@ -145,7 +145,7 @@ export class GridRenderingService {
     const cellsToCheck: Cell[] = this.getCellsToCheck(gameProperties, gridProperties);
     cellsToCheck.forEach(cell => {
       if (cell.alive)
-        drawingContext.offscreenCtx.fillRect(cell.x, cell.y, GRID_CONSTANTS.CELL_SIZE, GRID_CONSTANTS.CELL_SIZE);
+        drawingContext.offscreenCtx.fillRect(cell.x, cell.y, gridProperties.cellSize, gridProperties.cellSize);
     });
 
     drawingContext.gameCtx.drawImage(drawingContext.offscreenCanvas, 0, 0);
@@ -158,7 +158,7 @@ export class GridRenderingService {
 
     for (let x: number = gridProperties.visibleGridRange.startCol; x <= gridProperties.visibleGridRange.endCol; x++) {
       for (let y: number = gridProperties.visibleGridRange.startRow; y <= gridProperties.visibleGridRange.endRow; y++) {
-        keys.push(`${x * GRID_CONSTANTS.CELL_SIZE},${y * GRID_CONSTANTS.CELL_SIZE}`);
+        keys.push(`${x * gridProperties.cellSize},${y * gridProperties.cellSize}`);
       }
     }
 

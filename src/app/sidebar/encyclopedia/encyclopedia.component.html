@@ -18,8 +18,8 @@
             <h3>{{ pattern.title }}</h3>
             <button (click)="copyToClipboard(pattern.rle)" title="Copy"><mat-icon>content_copy</mat-icon></button>
           </div>
-          <img class="pattern-image" [src]="pattern.img" [alt]="pattern.title">
           <p class="paragraph">{{ pattern.description }}</p>
+          <img class="pattern-image" [src]="pattern.img" [alt]="pattern.title">
         </div>
       </div>
     </mat-tab>

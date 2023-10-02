@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {ControlCommunicationService} from "../../services/control-communication.service";
-import {CONTROLS_CONSTANTS, GRID_CONSTANTS} from "../../app.constants";
+import {CONTROLS_CONSTANTS, MAIN_GRID_CONSTANTS} from "../../app.constants";
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -19,9 +19,9 @@ export class GameControlsComponent implements OnInit, OnDestroy {
   protected maxGenerationsPerSecond: number = CONTROLS_CONSTANTS.MAX_GEN_PER_SECOND;
   protected minGenerationsPerSecond: number = CONTROLS_CONSTANTS.MIN_GEN_PER_SECOND;
 
-  protected userMaxGridSize: number = GRID_CONSTANTS.INIT_GRID_SIZE / GRID_CONSTANTS.CELL_SIZE;
-  protected maxGridSize: number = GRID_CONSTANTS.MAX_GRID_SIZE / GRID_CONSTANTS.CELL_SIZE;
-  protected minGridSize: number = GRID_CONSTANTS.MIN_GRID_SIZE / GRID_CONSTANTS.CELL_SIZE;
+  protected userMaxGridSize: number = MAIN_GRID_CONSTANTS.INIT_GRID_SIZE / MAIN_GRID_CONSTANTS.CELL_SIZE;
+  protected maxGridSize: number = MAIN_GRID_CONSTANTS.MAX_GRID_SIZE / MAIN_GRID_CONSTANTS.CELL_SIZE;
+  protected minGridSize: number = MAIN_GRID_CONSTANTS.MIN_GRID_SIZE / MAIN_GRID_CONSTANTS.CELL_SIZE;
 
   private subscriptions: Subscription[] = [];
 
@@ -74,7 +74,7 @@ export class GameControlsComponent implements OnInit, OnDestroy {
 
   protected setUserMaxGridSize(value: number): void {
     this.userMaxGridSize = value;
-    this.gameService.updateGridSize(value * GRID_CONSTANTS.CELL_SIZE);
+    this.gameService.updateGridSize(value * MAIN_GRID_CONSTANTS.CELL_SIZE);
   }
 
   protected setToroidalGrid(value: boolean): void {
