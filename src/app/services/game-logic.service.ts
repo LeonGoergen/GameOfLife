@@ -24,7 +24,7 @@ export class GameLogicService {
     gameProperties.cellsToCheck = newCellsToCheck;
 
     if (gameProperties.cellsToCheck.size > 0) { gameProperties.generationCount += 1; }
-    if (gameProperties.generationCount === 1000) { console.log(performance.now() - this.startTime); }
+    //if (gameProperties.generationCount === 1000) { console.log(performance.now() - this.startTime); }
     gameProperties.frameCount += 1;
 
     return gameProperties;

@@ -3,4 +3,9 @@
      appCanvasZoom (zoomRequested)="handleZoom()" [drawingContext]="drawingContext">
   <canvas #gameCanvas class="layer" [attr.width]="drawingContext.CanvasWidth" [attr.height]="drawingContext.CanvasHeight"></canvas>
   <canvas #gridCanvas class="layer" [attr.width]="drawingContext.CanvasWidth" [attr.height]="drawingContext.CanvasHeight"></canvas>
+  <button class="button" (click)="onStartAutoGenerationClick()" title="Start Auto Generation" [class.highlighted]="autoPlay">
+    <div class="icon-container">
+      <mat-icon>keyboard_double_arrow_right</mat-icon>
+    </div>
+  </button>
 </div>

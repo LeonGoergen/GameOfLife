@@ -1,12 +1,13 @@
 <div class="content">
   <h2 class="main-heading">Encyclopedia</h2>
+  <hr class="divider">
   <p class="paragraph">
     In the course of a typical simulation in the Game of Life, a variety of distinct patterns emerge which are essential to the unfolding dynamics of the environment.
     These patterns can be broadly categorized based on their behaviors into static patterns, oscillating patterns, and moving patterns.
     The following sections provide an illustrative guide to the most common patterns that emerge in the Game of Life.
   </p>
 
-  <hr class="divider">
+
   <mat-tab-group>
     <mat-tab *ngFor="let category of categories" label="{{ category.title }}" class="mat-tab-label">
 
@@ -16,10 +17,29 @@
         <div class="pattern" *ngFor="let pattern of category.patterns">
           <div class="header">
             <h3>{{ pattern.title }}</h3>
-            <button (click)="copyToClipboard(pattern.rle)" title="Copy"><mat-icon>content_copy</mat-icon></button>
+            <button (click)="copyToClipboard(pattern.rle)" title="Copy to Clipboard"><mat-icon>content_copy</mat-icon></button>
           </div>
           <p class="paragraph">{{ pattern.description }}</p>
           <app-mini-grid [rleString]="pattern.rle"></app-mini-grid>
+        </div>
+        <div class="pattern">
+          <div class="header">
+            <h3>Custom Pattern</h3>
+          </div>
+          <p class="paragraph">Create your own pattern and save it to the encyclopedia.</p>
+          <div class="insert-form">
+            <input
+              #rleInput
+              class="input"
+              type="text"
+              required
+              placeholder="b2ob$o2bo$b2o!"
+              title="RLE encoded pattern"
+              [ngClass]="{ 'invalid-input': !isValidInput && buttonPressed }"
+              (input)="onInput()"
+            >
+            <button class="button" (click)="insertRle(rleInput.value)">Insert Pattern</button>
+          </div>
         </div>
       </div>
     </mat-tab>

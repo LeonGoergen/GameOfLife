@@ -36,6 +36,8 @@ export class MiniGridComponent implements OnInit, AfterViewInit {
   protected gameProperties!: GameProperties;
   protected transformationMatrix!: TransformationMatrix;
 
+  protected autoPlay: boolean = false;
+
   constructor(private transformationMatrixService: TransformationMatrixService,
               private rleService: RleService,
               private drawingContextFactoryService: DrawingContextFactoryService,
@@ -94,9 +96,18 @@ export class MiniGridComponent implements OnInit, AfterViewInit {
   }
 
   protected handleRleString(): void {
-    const cells: Cell[] | null = this.rleService.decodeRLE(this.gridProperties, this.rleString, 440, 440);
+    let cells: Cell[] | null = this.rleService.decodeRLE(this.gridProperties, this.rleString, 60, 60);
 
     if (!cells) { return; }
+
+    const patternSize = this.getPatternSize(cells);
+    const cellSize = this.gridProperties.cellSize;
+    const shiftX = Math.round((this.gridProperties.gridSize / 2 - patternSize.width / 2) / cellSize) * cellSize;
+    const shiftY = Math.round((this.gridProperties.gridSize / 2 - patternSize.height / 2) / cellSize) * cellSize;
+
+    console.log(shiftX, shiftY)
+
+    cells = this.shiftToCenter(cells, shiftX, shiftY);
 
     cells.forEach(cell => {
       this.gameProperties.cells.set(cell.key, cell);
@@ -106,8 +117,35 @@ export class MiniGridComponent implements OnInit, AfterViewInit {
     this.drawCells();
   }
 
-  private onNextGeneration(drawing: boolean): void {
-    this.gameProperties = this.gameLogicService.onNextGeneration(this.gridProperties, this.gameProperties);
-    if (drawing) { requestAnimationFrame((): void => { this.drawCells(); }); }
+  private getPatternSize(cells: Cell[]): { width: number; height: number } {
+    let minX = Number.MAX_SAFE_INTEGER;
+    let minY = Number.MAX_SAFE_INTEGER;
+    let maxX = Number.MIN_SAFE_INTEGER;
+    let maxY = Number.MIN_SAFE_INTEGER;
+
+    cells.forEach(cell => {
+      minX = Math.min(minX, cell.x);
+      minY = Math.min(minY, cell.y);
+      maxX = Math.max(maxX, cell.x);
+      maxY = Math.max(maxY, cell.y);
+    });
+
+    return { width: maxX - minX + this.gridProperties.cellSize, height: maxY - minY + this.gridProperties.cellSize};
+  }
+
+  private shiftToCenter(cells: Cell[], shiftX: number, shiftY: number): Cell[] {
+    return cells.map(cell => {
+      cell.x += shiftX;
+      cell.y += shiftY;
+      return cell;
+    });
+  }
+
+  protected onStartAutoGenerationClick(): void {
+    this.autoPlay = true;
+    setInterval(() => {
+      this.gameProperties = this.gameLogicService.onNextGeneration(this.gridProperties, this.gameProperties)
+      requestAnimationFrame((): void => { this.drawCells(); })
+    }, 200);
   }
 }

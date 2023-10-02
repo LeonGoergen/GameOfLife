@@ -4,20 +4,7 @@
     <span class="coordinates">Coordinates: ({{ x }},{{ y }})</span>
   </div>
   <div class="divider"></div>
-  <button class="button" (click)="pasteRle()">Paste</button>
-  <div class="insert-form">
-    <button class="button" (click)="insertRle(rleInput.value)">Insert Pattern</button>
-    <input
-      #rleInput
-      class="input"
-      type="text"
-      required
-      placeholder="b2ob$o2bo$b2o!"
-      title="RLE encoded pattern"
-      [ngClass]="{ 'invalid-input': !isValidInput && buttonPressed }"
-      (input)="onInput()"
-    >
-  </div>
+  <button class="button" (click)="pasteRle()" title="Insert RLE encoded pattern">Paste from Clipboard</button>
   <div class="divider"></div>
   <button class="button" (click)="selectArea()">Select Area</button>
   <button class="button" (click)="onBrushSelect()">Brush Tool</button>
