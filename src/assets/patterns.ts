@@ -1,4 +1,4 @@
-export const categories = [
+export const localCategories = [
   {
     title: 'Static Patterns',
     description: 'These are formations that remain stationary, retaining their structure over successive generations without undergoing any change. They represent a stable state in the simulation.',

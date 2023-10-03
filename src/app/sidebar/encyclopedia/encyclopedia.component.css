@@ -142,7 +142,8 @@ button:hover {
   border-radius: 5px;
   transition: 0.3s ease;
   width: 250px;
-  height: 60px;
+  height: 50px;
+  margin-top: 10px;
   background-color: var(--divider-color);
 }
 
@@ -155,7 +156,7 @@ button:hover {
   color: var(--text-color);
   border-radius: 5px;
   width: 250px;
-  margin: 5px 0;
+  height: 30px;
   text-align: left;
   display: block;
   box-sizing: border-box;
@@ -163,6 +164,20 @@ button:hover {
   resize: none;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   border: transparent 1px solid;
+  font-size: 1em;
+  bottom: 0;
+  position: absolute;
+  left: -125px
+}
+
+.caption-container {
+  height: 60px;
+  position: relative;
+}
+
+.text-container {
+  height: 100px;
+  position: relative;
 }
 
 .input::placeholder {
@@ -173,25 +188,8 @@ button:hover {
   outline: none !important;
 }
 
-#CaptionInput {
-  height: 60px;
-  font-size: 1em;
-}
-
-#DescriptionInput {
-  height: 90px;
-  font-size: 1em;
-  overflow-x: hidden;
-}
-
-#RleInput {
-  height: 90px;
-  font-size: 1em;
-  overflow-x: hidden;
-}
-
 .invalid-input {
-  border: #fc5252 1px solid !important;
+  background-color: rgba(252, 82, 82, 0.2) !important;
 }
 
 .divider {

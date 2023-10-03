@@ -27,14 +27,26 @@
             <app-mini-grid [rleString]="pattern.rle"></app-mini-grid>
           </div>
           <div class="pattern">
+            <div class="container">
+
+            </div>
             <h4 class="custom-info">Create your own pattern and save it to the encyclopedia.</h4>
+
+            <div class="caption-container">
+              <textarea id="CaptionInput" #captionInput class="input" type="text" required placeholder="Title" title="Title" [ngClass]="{ 'invalid-input': !isValidInput && buttonPressed && isTitleInvalid }"></textarea>
+            </div>
             <div class="divider"></div>
-            <textarea id="CaptionInput" #CaptionInput class="input" type="text" required placeholder="Title" title="Title"></textarea>
+
+            <div class="text-container">
+              <textarea id="DescriptionInput" #descriptionInput class="input" type="text" placeholder="Description" title="Description"></textarea>
+            </div>
             <div class="divider"></div>
-            <textarea id="DescriptionInput" #DescriptionInput class="input" type="text" placeholder="Description" title="Description"></textarea>
+
+            <div class="text-container">
+              <textarea id="RleInput" #rleInput class="input" type="text" required placeholder="RLE encoded pattern" title="RLE encoded pattern" [ngClass]="{ 'invalid-input': !isValidInput && buttonPressed && isRleInvalid }" (input)="onInput()"></textarea>
+            </div>
             <div class="divider"></div>
-            <textarea id="RleInput" #rleInput class="input" type="text" required placeholder="RLE encoded pattern" title="RLE encoded pattern" [ngClass]="{ 'invalid-input': !isValidInput && buttonPressed }" (input)="onInput()"></textarea>
-            <button class="button" (click)="insertRle(rleInput.value)">Add Pattern to the Encyclopedia!</button>
+            <button class="button" (click)="addPattern(rleInput.value, captionInput.value, descriptionInput.value)">Add Pattern to the Encyclopedia!</button>
           </div>
         </div>
       </ng-template>

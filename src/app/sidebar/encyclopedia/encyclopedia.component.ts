@@ -1,10 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import { categories } from '../../../assets/patterns';
+import { localCategories } from '../../../assets/patterns';
 import { MatDialogRef } from '@angular/material/dialog';
 import {MatTabChangeEvent} from "@angular/material/tabs";
-
-interface ngOnInit {
-}
 
 @Component({
   selector: 'app-encyclopedia',
@@ -12,7 +9,7 @@ interface ngOnInit {
   styleUrls: ['./encyclopedia.component.css']
 })
 export class EncyclopediaComponent implements OnInit {
-  categories = categories;
+  categories = localCategories;
   currentCategory: string = 'Static Patterns';
   isValidInput: boolean = true;
   buttonPressed: boolean = false;
@@ -33,11 +30,14 @@ export class EncyclopediaComponent implements OnInit {
     for (const pattern of storedPatterns) {
       const category = this.categories.find((cat) => cat.title === pattern.category);
       if (category) {
-        category.patterns.push({
-          title: pattern.title,
-          description: pattern.description,
-          rle: pattern.rle,
-        });
+        const existingPattern = category.patterns.find((p) => p.title === pattern.title);
+        if (!existingPattern) {
+          category.patterns.push({
+            title: pattern.title,
+            description: pattern.description,
+            rle: pattern.rle,
+          });
+        }
       }
     }
   }
@@ -50,20 +50,34 @@ export class EncyclopediaComponent implements OnInit {
     });
   }
 
-  insertRle(rleString: string): void {
+  isTitleInvalid: boolean = false;
+  isRleInvalid: boolean = false;
+
+  addPattern(rleString: string, title: string, description: string): void {
     rleString = rleString.replace(/\s+/g, '');
 
-    if (this.isValidRle(rleString)) {
+    const category = this.categories.find((cat) => cat.title === this.currentCategory);
+    const isDuplicateTitle = category && category.patterns.some((pattern) => pattern.title === title);
+
+    if (isDuplicateTitle !== undefined)
+
+    this.isTitleInvalid = isDuplicateTitle;
+    this.isRleInvalid = !this.isValidRle(rleString);
+
+    if (!this.isTitleInvalid && !this.isRleInvalid) {
       const pattern = {
         category: this.currentCategory,
-        title: (document.querySelector('#CaptionInput') as HTMLTextAreaElement).value,
-        description: (document.querySelector('#DescriptionInput') as HTMLTextAreaElement).value,
+        title: title,
+        description: description,
         rle: rleString
       }
       this.savePattern(pattern);
 
       this.isValidInput = true;
-      window.location.reload();
+
+      if (category) {
+        category.patterns.push(pattern);
+      }
     } else {
       this.isValidInput = false;
       this.buttonPressed = true;
@@ -88,8 +102,15 @@ export class EncyclopediaComponent implements OnInit {
     if (indexToDelete !== -1) {
       storedPatterns.splice(indexToDelete, 1);
       localStorage.setItem('patterns', JSON.stringify(storedPatterns));
-      this.loadPatternsFromLocalStorage();
-      window.location.reload();
+
+      // Instead of reloading the page, remove the pattern from the category's patterns
+      const category = this.categories.find((cat) => cat.title === this.currentCategory);
+      if (category) {
+        const patternIndex = category.patterns.findIndex((pattern) => pattern.title === titleToDelete);
+        if (patternIndex !== -1) {
+          category.patterns.splice(patternIndex, 1);
+        }
+      }
     }
   }
 
