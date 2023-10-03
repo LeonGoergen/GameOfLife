@@ -9,6 +9,7 @@ export class GamePropertiesFactoryService {
   create(): GameProperties {
     return {
       generationDeltas: [],
+      aliveCells: new Map<string, boolean>(),
       generationCount: 0,
       checkpoint: new Set<string>(),
       cellsToCheck: new Set<string>(),

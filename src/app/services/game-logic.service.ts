@@ -11,6 +11,9 @@ export class GameLogicService {
 
   public onNextGeneration(gridProperties: GridProperties, gameProperties: GameProperties): GameProperties {
     if (!this.startTime) { this.startTime = performance.now(); }
+    gameProperties.generationDeltas.push(gameProperties.aliveCells);
+    if (gameProperties.generationDeltas.length > 500) { gameProperties.generationDeltas.shift(); }
+
     const newCellsToCheck: Set<string> = new Set<string>();
     const aliveCells: Map<string, boolean> = new Map<string, boolean>();
 
@@ -18,9 +21,7 @@ export class GameLogicService {
     allCellsToCheck.forEach(key => this.determineNewCellState(gridProperties, gameProperties, key, aliveCells));
     this.convertToSet(gameProperties, aliveCells, newCellsToCheck);
 
-    gameProperties.generationDeltas.push(aliveCells);
-    if (gameProperties.generationDeltas.length > 500) { gameProperties.generationDeltas.shift(); }
-
+    gameProperties.aliveCells = aliveCells;
     gameProperties.cellsToCheck = newCellsToCheck;
 
     if (gameProperties.cellsToCheck.size > 0) { gameProperties.generationCount += 1; }
@@ -73,17 +74,19 @@ export class GameLogicService {
   }
 
   public onLastGeneration(gridProperties: GridProperties, gameProperties: GameProperties): GameProperties {
-    if (gameProperties.generationDeltas.length <= 0) { return gameProperties; }
+    if (gameProperties.generationCount <= 0) { return gameProperties; }
 
     const lastGenerationDeltas: Map<string, boolean> = gameProperties.generationDeltas.pop()!;
 
-    lastGenerationDeltas.forEach((newState: boolean, key: string): void => {
-      const cell: Cell | undefined = gameProperties.cells.get(key);
-      if (!cell) { return; }
-
-      cell.alive = !newState;
-      gameProperties.cellsToCheck.add(key);
-      this.getNeighborKeys(gridProperties, cell).forEach(neighborKey => gameProperties.cellsToCheck.add(neighborKey));
+    gameProperties.cells.forEach((cell: Cell, key: string): void => {
+      const newState: boolean | undefined = lastGenerationDeltas.get(key);
+      if (newState !== undefined) {
+        cell.alive = newState;
+        gameProperties.cellsToCheck.add(key);
+        this.getNeighborKeys(gridProperties, cell).forEach(neighborKey => gameProperties.cellsToCheck.add(neighborKey));
+      } else {
+        cell.alive = false;
+      }
     });
 
     gameProperties.generationCount -= 1;
