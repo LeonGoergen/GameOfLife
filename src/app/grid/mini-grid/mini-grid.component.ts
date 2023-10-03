@@ -105,8 +105,6 @@ export class MiniGridComponent implements OnInit, AfterViewInit {
     const shiftX = Math.round((this.gridProperties.gridSize / 2 - patternSize.width / 2) / cellSize) * cellSize;
     const shiftY = Math.round((this.gridProperties.gridSize / 2 - patternSize.height / 2) / cellSize) * cellSize;
 
-    console.log(shiftX, shiftY)
-
     cells = this.shiftToCenter(cells, shiftX, shiftY);
 
     cells.forEach(cell => {

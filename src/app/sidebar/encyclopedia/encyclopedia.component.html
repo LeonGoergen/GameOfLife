@@ -8,40 +8,36 @@
   </p>
 
 
-  <mat-tab-group>
+  <mat-tab-group (selectedTabChange)="onTabChange($event)">
     <mat-tab *ngFor="let category of categories" label="{{ category.title }}" class="mat-tab-label">
+        <ng-template matTabContent>
 
-      <h2 class="heading">{{ category.title }}</h2>
-      <p class="paragraph">{{ category.description }}</p>
-      <div class="pattern-container">
-        <div class="pattern" *ngFor="let pattern of category.patterns">
-          <div class="header">
-            <h3>{{ pattern.title }}</h3>
-            <button (click)="copyToClipboard(pattern.rle)" title="Copy to Clipboard"><mat-icon>content_copy</mat-icon></button>
+        <h2 class="heading">{{ category.title }}</h2>
+        <p class="paragraph">{{ category.description }}</p>
+        <div class="pattern-container">
+          <div class="pattern" *ngFor="let pattern of category.patterns">
+            <div class="header">
+              <h3>{{ pattern.title }}</h3>
+              <div class="buttons">
+                <button (click)="copyToClipboard(pattern.rle)" title="Copy to Clipboard" class="copy-button"><mat-icon>content_copy</mat-icon></button>
+                <button (click)="deletePattern(pattern.title)" title="Delete Pattern" class="delete-button"><mat-icon>delete</mat-icon></button>
+              </div>
+            </div>
+            <p class="paragraph">{{ pattern.description }}</p>
+            <app-mini-grid [rleString]="pattern.rle"></app-mini-grid>
           </div>
-          <p class="paragraph">{{ pattern.description }}</p>
-          <app-mini-grid [rleString]="pattern.rle"></app-mini-grid>
-        </div>
-        <div class="pattern">
-          <div class="header">
-            <h3>Custom Pattern</h3>
-          </div>
-          <p class="paragraph">Create your own pattern and save it to the encyclopedia.</p>
-          <div class="insert-form">
-            <input
-              #rleInput
-              class="input"
-              type="text"
-              required
-              placeholder="b2ob$o2bo$b2o!"
-              title="RLE encoded pattern"
-              [ngClass]="{ 'invalid-input': !isValidInput && buttonPressed }"
-              (input)="onInput()"
-            >
-            <button class="button" (click)="insertRle(rleInput.value)">Insert Pattern</button>
+          <div class="pattern">
+            <h4 class="custom-info">Create your own pattern and save it to the encyclopedia.</h4>
+            <div class="divider"></div>
+            <textarea id="CaptionInput" #CaptionInput class="input" type="text" required placeholder="Title" title="Title"></textarea>
+            <div class="divider"></div>
+            <textarea id="DescriptionInput" #DescriptionInput class="input" type="text" placeholder="Description" title="Description"></textarea>
+            <div class="divider"></div>
+            <textarea id="RleInput" #rleInput class="input" type="text" required placeholder="RLE encoded pattern" title="RLE encoded pattern" [ngClass]="{ 'invalid-input': !isValidInput && buttonPressed }" (input)="onInput()"></textarea>
+            <button class="button" (click)="insertRle(rleInput.value)">Add Pattern to the Encyclopedia!</button>
           </div>
         </div>
-      </div>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
 </div>
