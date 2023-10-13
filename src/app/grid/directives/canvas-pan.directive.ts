@@ -1,6 +1,6 @@
-import {Directive, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
-import {TransformationMatrixService} from "../../services/transformation-matrix.service";
-import {DrawingContext} from "../../models/drawing-context.model";
+import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { TransformationMatrixService } from "../../services/transformation-matrix.service";
+import { DrawingContext } from "../../models/drawing-context.model";
 
 @Directive({
   selector: '[appCanvasPan]'
@@ -22,31 +22,52 @@ export class CanvasPanDirective {
   ) {}
 
   @HostListener('mousedown', ['$event'])
-  startPan(event: MouseEvent): void {
+  @HostListener('touchstart', ['$event'])
+  startPan(event: MouseEvent | TouchEvent): void {
     this.isPanning = true;
-    this.lastPanX = event.clientX;
-    this.lastPanY = event.clientY;
+    this.lastPanX = this.getEventX(event);
+    this.lastPanY = this.getEventY(event);
     this.totalPanDistance = 0;
   }
 
   @HostListener('mousemove', ['$event'])
-  pan(event: MouseEvent): void {
+  @HostListener('touchmove', ['$event'])
+  pan(event: MouseEvent | TouchEvent): void {
     if (!this.isPanning) { return; }
 
-    const deltaX: number = event.clientX - this.lastPanX;
-    const deltaY: number = event.clientY - this.lastPanY;
+    const deltaX: number = this.getEventX(event) - this.lastPanX;
+    const deltaY: number = this.getEventY(event) - this.lastPanY;
 
     this.transformationMatrix = this.transformationMatrixService.translate(this.transformationMatrix, this.drawingContext, deltaX, deltaY, this.gridSize);
 
-    this.lastPanX = event.clientX;
-    this.lastPanY = event.clientY;
+    this.lastPanX = this.getEventX(event);
+    this.lastPanY = this.getEventY(event);
     this.totalPanDistance += Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
     this.panUpdated.emit(this.totalPanDistance);
   }
 
-  @HostListener('mouseup', ['$event'])
+  @HostListener('mouseup')
+  @HostListener('touchend')
   endPan(): void {
     this.isPanning = false;
+  }
+
+  private getEventX(event: MouseEvent | TouchEvent): number {
+    if (event instanceof MouseEvent) {
+      return event.clientX;
+    } else if (event.touches && event.touches.length > 0) {
+      return event.touches[0].clientX;
+    }
+    return 0;
+  }
+
+  private getEventY(event: MouseEvent | TouchEvent): number {
+    if (event instanceof MouseEvent) {
+      return event.clientY;
+    } else if (event.touches && event.touches.length > 0) {
+      return event.touches[0].clientY;
+    }
+    return 0;
   }
 }
